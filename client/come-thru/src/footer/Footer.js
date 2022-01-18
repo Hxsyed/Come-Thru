@@ -9,7 +9,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="">
-        Come - Thru
+        Come-Thru
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
