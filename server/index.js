@@ -62,6 +62,7 @@ app.post("/login",(req,res) => {
     const username = req.body.username;
     const password = req.body.password;
     console.log(username,password);
+    console.log("Hello!");
     db.query("SELECT * FROM admins WHERE user = ?;",
     username,
     (err,result) => {
