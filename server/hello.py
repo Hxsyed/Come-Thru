@@ -13,7 +13,7 @@ current_time = now.strftime("%H:%M:%S")
 print("Current Time is :", current_time)
 
 def fun():
-    print("Hello There Sir!")
+    print("Hello There  Sir!")
 
 fun()
 
