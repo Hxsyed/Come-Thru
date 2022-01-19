@@ -12,6 +12,15 @@ const app = express();
 app.use(express.json()); 
 app.use(cors());
 
+const corsOptions ={
+    origin: process.env.HEROKU_LINK, 
+    methods: 'GET,POST,PATCH,DELETE,OPTIONS,PUT',
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200,
+ }
+
+ app.use(cors(corsOptions)) // Use this after the variable declaration
+ 
 const db = mysql.createPool({
     host: process.env.HOST,       
     user: process.env.USER,         
@@ -255,7 +264,10 @@ app.post("/RFIDRegister", (req,res) => {
     });
 })
 
+const PORT = process.env.PORT || 5000;
 
-app.listen(process.env.PORT || 3001, ()=> {
-    console.log("running on port 3001");
-})
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
+// app.listen(process.env.PORT || 3001, ()=> {
+//     console.log("running on port 3001");
+// })
