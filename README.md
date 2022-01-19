@@ -2,7 +2,7 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/77b3afd5-b2ef-4d5a-8ba3-a2e52fa2a111/deploy-status)](https://app.netlify.com/sites/come-thru/deploys)
 
 ## Live Website Link
-[CCNY Zero Live](https://come-thru.netlify.app/)
+[Live](https://come-thru.netlify.app/)
 
 Come-Thru Designed for entrance, engineered to last.
 
@@ -38,6 +38,6 @@ Open http://localhost:3000 to view it in the browser.
   - `hello.py` : Contains the code to fetch the RFID tag from MFRC-522 scanner
    
 ## Project Documentation
-1. [Come-Thru Powerpoint](https://drive.google.com/file/d/11BTRRMZfQFwb-vi__FjNdz-cUS9OFXV8/view?usp=sharing)
+1. [Come-Thru Powerpoint](https://docs.google.com/presentation/d/1Z1KDI86ZyrXi80IyVem2_2I12m0egvLq/edit?usp=sharing&ouid=103159057980070067489&rtpof=true&sd=true)
 2. [Come-Thru Proposal](https://drive.google.com/file/d/11BTRRMZfQFwb-vi__FjNdz-cUS9OFXV8/view?usp=sharing)  
 
