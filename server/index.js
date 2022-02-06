@@ -250,7 +250,7 @@ app.post("/deleteAdmin", async (req,res) => {
 app.post("/RFIDRegister", (req,res) => {
     var dataToSend;
     // spawn new child process to call the python script
-    const python = spawn('python', ['hello.py']);
+    const python = spawn('python', ['RFID.py']);
     // collect data from script
     python.stdout.on('data', function (data) {
     console.log('Pipe data from python script ...');
