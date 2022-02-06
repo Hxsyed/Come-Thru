@@ -13,7 +13,7 @@ app.use(express.json());
 // app.use(cors());
 
 const corsOptions ={
-    origin: process.env.HEROKU_LINK, 
+    origin: process.env.CORS_PROXY_LINK, 
     methods: 'GET,POST,PATCH,DELETE,OPTIONS,PUT',
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200,
@@ -65,6 +65,10 @@ const verifyJWT = (req, res, next) => {
 
 app.get("/isUserAuth", verifyJWT, (req, res) => {
     res.json({auth: true, Role: req.userRole})
+})
+
+app.get("/", (req,res) => {
+    res.send("I am alive");
 })
 
 app.post("/login",(req,res) => {
