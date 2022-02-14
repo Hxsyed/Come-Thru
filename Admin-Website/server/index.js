@@ -17,9 +17,9 @@ const corsOptions ={
     methods: 'GET,POST,PATCH,DELETE,OPTIONS,PUT',
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200,
- }
+}
 
- app.use(cors(corsOptions)) // Use this after the variable declaration
+app.use(cors(corsOptions)) // Use this after the variable declaration
  
 const db = mysql.createPool({
     host: process.env.HOST,       
@@ -178,8 +178,6 @@ function validateadmin(username){
       });
 }
 
-
-
 app.post("/registeradmin", async (req,res) => {
     const username = req.body.adminusername;
     const password = req.body.adminpassword;
@@ -208,6 +206,61 @@ app.post("/registeradmin", async (req,res) => {
                 //If success
             res.send({message: "Admin Registration completed successsfully!"});
             //  console.log(result);
+            }
+        })
+      })
+    }
+})
+
+// guard register
+function validateguard(username){
+    // check if the user already exist
+    return new Promise((resolve, reject) => {
+        db.query("SELECT * FROM guards WHERE username = ?;",
+        username,
+        (err,result) => {
+            if(err){
+                res.send({err: err});
+            }
+            if(result){ 
+               if(result.length===0){
+                reject(false);
+               }
+               else resolve(true);
+            }
+        })
+      });
+}
+
+app.post("/registerguard", async (req,res) => {
+    const username = req.body.guardusername;
+    const password = req.body.guardpassword;
+    console.log(username, password)
+    try {
+        var val = await validateguard(username);
+      } catch (err) {
+        console.log(err);
+      }
+      if(val){
+        res.send({message: "User with given username already exist!"});
+      }
+      else{
+        bcrypt.hash(password, saltRounds, (err,hash) => {
+            if(err){
+                console.log(err)
+            }
+        db.query("INSERT INTO guards (username,password) VALUES (?,?)",
+        [username,hash], 
+        (err,result) => {
+            if (err) {
+                //If error
+                res.send({err: err});
+                console.log(err);
+            } 
+            else{
+                //If success
+                res.send({message: "Security Guard Registration completed successsfully!"});
+                console.log(result);
             }
         })
       })

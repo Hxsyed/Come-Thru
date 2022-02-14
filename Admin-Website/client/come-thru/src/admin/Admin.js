@@ -92,7 +92,6 @@ export default function SignUp() {
   const adminhandleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
     console.log(data.get('adminusername'));
     console.log(data.get('adminpassword'));
     if (!validator.isAlpha(data.get('adminusername'))){
@@ -101,7 +100,7 @@ export default function SignUp() {
         return
     }
     if (!validator.isAlpha(data.get('adminpassword'))){
-        alert("First Name can only contain letters!");
+        alert("Password can only contain letters!");
         history.push('/Home');
         return
     }
@@ -112,6 +111,42 @@ export default function SignUp() {
     axiosInstance.post("/registeradmin",{
       adminusername: usernameregisteradmmin,
       adminpassword: passwordregisteradmin,
+    }).then((Response) => {
+      if(Response.data.err){
+        alert("Something went wrong check your field input and try again!");
+        history.push('/Home');
+        return
+      }
+      if(Response.data.message){
+        alert(Response.data.message);
+        history.push('/Home');
+        return
+      }
+    });
+  };
+
+  const securityguardhandleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log(data.get('securityusername'));
+    console.log(data.get('securitypassword'));
+    if (!validator.isAlpha(data.get('securityusername'))){
+        alert("Username can only contain letters!");
+        // history.push('/Home');
+        return
+    }
+    if (!validator.isAlphanumeric(data.get('securitypassword'))){
+        alert("Password can only contain letters and numbers!");
+        // history.push('/Home');
+        return
+    }
+    registersecurityguard(data.get('securityusername'),data.get('securitypassword'));
+  };
+
+  const registersecurityguard = (usernameregisterguard,passwordregisterguard) => {
+    axiosInstance.post("/registerguard",{
+      guardusername: usernameregisterguard,
+      guardpassword: passwordregisterguard,
     }).then((Response) => {
       if(Response.data.err){
         alert("Something went wrong check your field input and try again!");
@@ -244,6 +279,40 @@ export default function SignUp() {
               sx={{ mt: 3, mb: 2 }}
             >
               Register Admin
+            </Button>
+          </Box>
+          }
+          {
+            ((userData.getStatus()===true) && (userData.getRole()===0)) &&
+            <Box component="form" noValidate onSubmit={securityguardhandleSubmit} sx={{ mt: 3 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} >
+                <TextField
+                  name="securityusername"
+                  required
+                  fullWidth
+                  id="securityusername"
+                  label="Security Guard Username"
+                  autoFocus
+                />
+              </Grid>
+              <Grid item xs={12} >
+                <TextField
+                  required
+                  fullWidth
+                  id="securitypassword"
+                  label="Security Guard Password"
+                  name="securitypassword"
+                />
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Register Security Guard
             </Button>
           </Box>
           }
