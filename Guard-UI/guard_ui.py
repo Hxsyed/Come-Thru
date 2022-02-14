@@ -1,7 +1,10 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Label, ttk
 from tkinter import messagebox
 from db import Database
+
+from tkinter import *
+
 db = Database()
 
 LARGEFONT =("Verdana", 35)
@@ -37,7 +40,7 @@ class tkinterApp(tk.Tk):
 			self.frames[F] = frame
 
 			frame.grid(row = 0, column = 0, sticky ="nsew")
-
+		#switched to HomePage 
 		self.show_frame(SignInPage)
 
 	# to display the current frame passed as
@@ -70,6 +73,8 @@ class tkinterApp(tk.Tk):
 	
 	def searchUser(self,EMPLID):
 		ret = db.search(EMPLID)
+		ret1 = db.fetch(34566235)
+		print(ret1)
 		self.popup_window(ret)
 	
 	def popup_window(self,ret):
@@ -140,6 +145,25 @@ class HomePage(tk.Frame):
 		tk.Frame.__init__(self, parent)
 		label = ttk.Label(self, text ="Page 1", font = LARGEFONT)
 		label.grid(row = 0, column = 4, padx = 10, pady = 10)
+
+		#My code========================================================================
+	
+		myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
+		myLabel.grid(row = 20, column = 1, padx = 10, pady = 10)
+
+		result = db.fetch(1091481150244)
+		
+		Name = Label(myLabel, text = "Name: "+result[0])
+		Name.grid(row = 1, column = 0, padx = 10, pady = 10)
+		
+		empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]))
+		empl.grid(row = 2, column = 0, padx = 10, pady = 10)
+		
+		vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
+		vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
+
+		#=====================================================================================
+
 		# EMPLID search 
 		EMPLID = tk.StringVar()
 		label1 = ttk.Label(self, text ="EMPL ID", font = MEDIUMFONT)
@@ -151,14 +175,19 @@ class HomePage(tk.Frame):
 		findbutton.grid(row = 2, column = 5, padx = 10, pady = 10)
 		# button to show frame 2 with text
 		# layout2
-		# Entry button 
-		approve = tk.Button(self, text ="YES", bg='green', fg='white',
+	    # Entry button 
+		
+		#LabelFrame button for Approve and deny Buttons
+		buttonLabel = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 10,pady = 10)
+		buttonLabel.grid(row = 20, column = 0, padx = 5, pady = 5)
+
+		approve = tk.Button(buttonLabel, text ="YES", bg='green', fg='white',
 		command = lambda : controller.authentication("Y"))
-		approve.grid(row = 20, column = 5, padx = 10, pady = 10)
+		approve.grid(row = 0, column = 0, padx = 10, pady = 10)
 		# Deny button
-		deny = tk.Button(self, text ="NO", bg='red', fg='white',
+		deny = tk.Button(buttonLabel, text ="NO", bg='red', fg='white',
 		command = lambda : controller.authentication("N"))
-		deny.grid(row = 30, column = 5, padx = 10, pady = 10)
+		deny.grid(row = 1, column = 0, padx = 10, pady = 10)
 
 # Driver Code
 app = tkinterApp()

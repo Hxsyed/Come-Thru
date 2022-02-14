@@ -11,6 +11,7 @@ db = mysql.connector.connect(user=os.getenv("USER"),
                             database=os.getenv("DATABASE_NAME"))
  
 mycursor = db.cursor()
+
 class Database:
     
     def login(self, username, password):
@@ -29,6 +30,7 @@ class Database:
         # fetch the data from the database using the RFID TAG
         # select * from admins
         # ("SELECT RFID FROM users WHERE RFID = ?", (RFID))
+
         mycursor.execute("SELECT * FROM users WHERE RFID = %s", (int(RFID),))
         rows = mycursor.fetchall()
         print(len(rows))
@@ -36,7 +38,7 @@ class Database:
             full_name = rows[0][1] + " " + rows[0][2]
             empl = rows[0][5]
             vax = rows[0][4]
-            print(full_name, empl, vax)
+            return(full_name, empl, vax)
         # for i in rows:
         #     print(i[0][0])
 
@@ -49,7 +51,7 @@ class Database:
             full_name = rows[0][1] + " " + rows[0][2]
             empl = rows[0][5]
             vax = rows[0][4]
-            mycursor.close()
+            
             return (full_name, empl, vax)
         else:
             mycursor.close()
