@@ -1,0 +1,5 @@
+pip install mysql
+pip install mysql-connector
+pip install bcrypt
+pip install python-dotenv
+pip install requests

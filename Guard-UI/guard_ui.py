@@ -2,11 +2,11 @@ import tkinter as tk
 from tkinter import Label, ttk
 from tkinter import messagebox
 from db import Database
-
+from datetime import datetime
 from tkinter import *
 
 db = Database()
-
+now = datetime.now()
 LARGEFONT =("Verdana", 35)
 MEDIUMFONT =("Verdana", 20)
 
@@ -41,7 +41,7 @@ class tkinterApp(tk.Tk):
 
 			frame.grid(row = 0, column = 0, sticky ="nsew")
 		#switched to HomePage 
-		self.show_frame(SignInPage)
+		self.show_frame(HomePage)
 
 	# to display the current frame passed as
 	# parameter
@@ -143,13 +143,19 @@ class HomePage(tk.Frame):
 	def __init__(self, parent, controller):
 		
 		tk.Frame.__init__(self, parent)
-		label = ttk.Label(self, text ="Page 1", font = LARGEFONT)
+		#date and time
+		DT = now.strftime("%m/%d/%Y %I:%M %p")
+		label = ttk.Label(self, text =DT, font = LARGEFONT)
 		label.grid(row = 0, column = 4, padx = 10, pady = 10)
-
-		#My code========================================================================
+		# db.weather()
+		# signout button
+		signoutbutton = tk.Button(self, text ="SIGN OUT", bg='grey', fg='white',
+		command = lambda : controller.show_frame(SignInPage))
+		signoutbutton.place(relx=.95, rely=.05,anchor= 'c')
+		#RFID SCAN
 	
 		myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
-		myLabel.grid(row = 20, column = 1, padx = 10, pady = 10)
+		myLabel.place(relx=.75, rely=.75,anchor= 'c')
 
 		result = db.fetch(1091481150244)
 		
@@ -166,20 +172,17 @@ class HomePage(tk.Frame):
 
 		# EMPLID search 
 		EMPLID = tk.StringVar()
-		label1 = ttk.Label(self, text ="EMPL ID", font = MEDIUMFONT)
-		label1.grid(row = 1, column = 4, padx = 10, pady = 10)
-		EMPLIDEntry = ttk.Entry(self,textvariable=EMPLID)
+		empllabelframe = LabelFrame(self, text= "EMPL ID", font = MEDIUMFONT,padx = 30,pady = 30)
+		empllabelframe.place(relx=.25, rely=.25,anchor= 'c')
+		EMPLIDEntry = ttk.Entry(empllabelframe,textvariable=EMPLID)
 		EMPLIDEntry.grid(row = 2, column = 4, padx = 10, pady = 10)
-		findbutton = tk.Button(self, text ="FIND", bg='grey', fg='white',
+		findbutton = tk.Button(empllabelframe, text ="FIND", bg='grey', fg='white',
 		command = lambda : controller.searchUser(EMPLID.get()))
 		findbutton.grid(row = 2, column = 5, padx = 10, pady = 10)
-		# button to show frame 2 with text
-		# layout2
-	    # Entry button 
 		
-		#LabelFrame button for Approve and deny Buttons
-		buttonLabel = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 10,pady = 10)
-		buttonLabel.grid(row = 20, column = 0, padx = 5, pady = 5)
+		#Authentication
+		buttonLabel = LabelFrame(self, text= "Authentication", font = MEDIUMFONT,padx = 10,pady = 10)
+		buttonLabel.place(relx=.25, rely=.75,anchor= 'c')
 
 		approve = tk.Button(buttonLabel, text ="YES", bg='green', fg='white',
 		command = lambda : controller.authentication("Y"))
@@ -188,6 +191,8 @@ class HomePage(tk.Frame):
 		deny = tk.Button(buttonLabel, text ="NO", bg='red', fg='white',
 		command = lambda : controller.authentication("N"))
 		deny.grid(row = 1, column = 0, padx = 10, pady = 10)
+
+		
 
 # Driver Code
 app = tkinterApp()

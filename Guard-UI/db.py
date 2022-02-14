@@ -1,5 +1,6 @@
 import mysql.connector
 import os
+import requests
 import bcrypt
 from dotenv import load_dotenv
 load_dotenv()
@@ -56,3 +57,12 @@ class Database:
         else:
             mycursor.close()
             return ('No User Found')
+    
+    def weather(self):
+        user_api = os.getenv("WEATHER_API_KEY")
+        location = "New York, US"
+
+        complete_api_link = "https://api.openweathermap.org/data/2.5/weather?q="+location+"&appid="+user_api
+        api_link = requests.get(complete_api_link)
+        api_data = api_link.json()
+        print(api_data)
