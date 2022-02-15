@@ -74,7 +74,6 @@ class tkinterApp(tk.Tk):
 	def searchUser(self,EMPLID):
 		ret = db.search(EMPLID)
 		ret1 = db.fetch(34566235)
-		print(ret1)
 		self.popup_window(ret)
 	
 	def popup_window(self,ret):
@@ -143,15 +142,40 @@ class HomePage(tk.Frame):
 	def __init__(self, parent, controller):
 		
 		tk.Frame.__init__(self, parent)
-		#date and time
+		#Date and Time
+
+		date_time = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
+		date_time.place(relx=.3, rely=.1,anchor= 'c')
 		DT = now.strftime("%m/%d/%Y %I:%M %p")
-		label = ttk.Label(self, text =DT, font = LARGEFONT)
-		label.grid(row = 0, column = 4, padx = 10, pady = 10)
-		# db.weather()
+		dateandtime = Label(date_time, text = DT, font = LARGEFONT)
+		dateandtime.grid(row = 1, column = 0, padx = 10, pady = 10)
+
+		# Temperature
+
+		weather = db.weather()
+		weather_frame = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
+		weather_frame.place(relx=.7, rely=.1,anchor= 'c')
+
+		City = Label(weather_frame, text = "City: "+weather[0])
+		City.grid(row = 0, column = 0, padx = 10, pady = 10)
+
+		Temperature = Label(weather_frame, text = "Temperature: "+weather[1]+"°F")
+		Temperature.grid(row = 1, column = 0, padx = 10, pady = 10)
+
+		Description = Label(weather_frame, text = "Description: "+weather[2])
+		Description.grid(row = 0, column = 2, padx = 10, pady = 10)
+
+		HTemperature = Label(weather_frame, text = "H: "+weather[3]+"°F")
+		HTemperature.grid(row = 1, column = 2, padx = 10, pady = 10)
+
+		LTemperature = Label(weather_frame, text = "L: "+weather[4]+"°F")
+		LTemperature.grid(row = 1, column = 3, padx = 10, pady = 10)
+
 		# signout button
 		signoutbutton = tk.Button(self, text ="SIGN OUT", bg='grey', fg='white',
 		command = lambda : controller.show_frame(SignInPage))
 		signoutbutton.place(relx=.95, rely=.05,anchor= 'c')
+
 		#RFID SCAN
 	
 		myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)

@@ -59,10 +59,19 @@ class Database:
             return ('No User Found')
     
     def weather(self):
-        user_api = os.getenv("WEATHER_API_KEY")
-        location = "New York, US"
-
-        complete_api_link = "https://api.openweathermap.org/data/2.5/weather?q="+location+"&appid="+user_api
+        
+        complete_api_link = "https://api.openweathermap.org/data/2.5/weather?q="+"New York, US"+"&appid="+os.getenv("WEATHER_API_KEY")
         api_link = requests.get(complete_api_link)
         api_data = api_link.json()
-        print(api_data)
+        # city name, temp, main, high, low
+        city_name = api_data['name']
+        temp = self.conv_k_to_f(api_data['main']['temp'])
+        desc = api_data['weather'][0]['description']
+        h_temp = self.conv_k_to_f(api_data['main']['temp_max'])
+        l_temp = self.conv_k_to_f(api_data['main']['temp_min'])
+        return(city_name, temp, desc, h_temp, l_temp)
+    
+    def conv_k_to_f(self, k):
+        F = (int(k) - 273.15) * 1.8 + 32
+        format_float = "{:.2f}".format(F)
+        return format_float
