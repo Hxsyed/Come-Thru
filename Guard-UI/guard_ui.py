@@ -4,6 +4,7 @@ from tkinter import messagebox
 from db import Database
 from datetime import datetime
 from tkinter import *
+from time import strftime
 
 db = Database()
 now = datetime.now()
@@ -68,8 +69,13 @@ class tkinterApp(tk.Tk):
 		else:
 			messagebox.showerror("Sign In", "User does not exist")
 	
-	def authentication(self,action):
-		print(action)
+	def authentication(self,auth):
+		if(auth=='Y'):
+			# Turn on the green led right on bred board
+			print(auth)
+		else:
+			# Turn on the red led right on bred board
+			print(auth)
 	
 	def searchUser(self,EMPLID):
 		ret = db.search(EMPLID)
@@ -138,17 +144,19 @@ class SignInPage(tk.Frame):
 
 # second window frame page1
 class HomePage(tk.Frame):
-	
-	def __init__(self, parent, controller):
-		
-		tk.Frame.__init__(self, parent)
-		#Date and Time
+	def haha(self):
+		print("HI")
 
-		date_time = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
-		date_time.place(relx=.3, rely=.1,anchor= 'c')
-		DT = now.strftime("%m/%d/%Y %I:%M %p")
-		dateandtime = Label(date_time, text = DT, font = LARGEFONT)
-		dateandtime.grid(row = 1, column = 0, padx = 10, pady = 10)
+	def __init__(self, parent, controller):
+		tk.Frame.__init__(self, parent)
+		
+		# Date and Time
+
+		# date_time = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
+		# date_time.place(relx=.3, rely=.1,anchor= 'c')
+		# DT = now.strftime("%m/%d/%Y %I:%M %p")
+		# dateandtime = Label(date_time, text = DT, font = LARGEFONT)
+		# dateandtime.grid(row = 1, column = 0, padx = 10, pady = 10)
 
 		# Temperature
 
@@ -171,12 +179,12 @@ class HomePage(tk.Frame):
 		LTemperature = Label(weather_frame, text = "L: "+weather[4]+"°F")
 		LTemperature.grid(row = 1, column = 3, padx = 10, pady = 10)
 
-		# signout button
+		# Signout button
 		signoutbutton = tk.Button(self, text ="SIGN OUT", bg='grey', fg='white',
 		command = lambda : controller.show_frame(SignInPage))
 		signoutbutton.place(relx=.95, rely=.05,anchor= 'c')
 
-		#RFID SCAN
+		# RFID SCAN
 	
 		myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
 		myLabel.place(relx=.75, rely=.75,anchor= 'c')
@@ -192,8 +200,6 @@ class HomePage(tk.Frame):
 		vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
 		vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
 
-		#=====================================================================================
-
 		# EMPLID search 
 		EMPLID = tk.StringVar()
 		empllabelframe = LabelFrame(self, text= "EMPL ID", font = MEDIUMFONT,padx = 30,pady = 30)
@@ -204,10 +210,10 @@ class HomePage(tk.Frame):
 		command = lambda : controller.searchUser(EMPLID.get()))
 		findbutton.grid(row = 2, column = 5, padx = 10, pady = 10)
 		
-		#Authentication
+		# Authentication
 		buttonLabel = LabelFrame(self, text= "Authentication", font = MEDIUMFONT,padx = 10,pady = 10)
 		buttonLabel.place(relx=.25, rely=.75,anchor= 'c')
-
+		# Approve Button 
 		approve = tk.Button(buttonLabel, text ="YES", bg='green', fg='white',
 		command = lambda : controller.authentication("Y"))
 		approve.grid(row = 0, column = 0, padx = 10, pady = 10)
@@ -216,10 +222,31 @@ class HomePage(tk.Frame):
 		command = lambda : controller.authentication("N"))
 		deny.grid(row = 1, column = 0, padx = 10, pady = 10)
 
+		# Camera
+		camera = LabelFrame(self, text= "Live Camera", font = MEDIUMFONT,padx = 10,pady = 10)
+		camera.place(relx=.75, rely=.25,anchor= 'c')
+		cameralabel = Label(camera, text = "cameralabel: ")
+		cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+
 		
 
 # Driver Code
 app = tkinterApp()
 app.state('zoomed')
 app.title('Come-Thru')
+lol = HomePage()
+lol.haha()
+def my_time():
+    time_string = strftime("%m/%d/%Y %I:%M %p") # time format 
+    l1.config(text=time_string)
+    l1.after(60000,my_time) # time delay of 1000 milliseconds 
+	
+my_font=('times',52,'bold') # display size and style
+
+date_time = LabelFrame(app, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
+date_time.place(relx=.3, rely=.1,anchor= 'c')
+l1 = Label(date_time, font = LARGEFONT)
+l1.grid(row = 1, column = 0, padx = 10, pady = 10)
+
+my_time()
 app.mainloop()
