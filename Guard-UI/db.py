@@ -61,8 +61,11 @@ class Database:
     def weather(self):
         
         complete_api_link = "https://api.openweathermap.org/data/2.5/weather?q="+"New York, US"+"&appid="+os.getenv("WEATHER_API_KEY")
+        
         api_link = requests.get(complete_api_link)
+        print(api_link)
         api_data = api_link.json()
+        
         # city name, temp, main, high, low
         city_name = api_data['name']
         temp = self.conv_k_to_f(api_data['main']['temp'])

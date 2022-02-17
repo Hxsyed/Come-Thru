@@ -5,6 +5,7 @@ from db import Database
 from datetime import datetime
 from tkinter import *
 from time import strftime
+import threading
 
 db = Database()
 now = datetime.now()
@@ -12,6 +13,7 @@ LARGEFONT =("Verdana", 35)
 MEDIUMFONT =("Verdana", 20)
 
 class tkinterApp(tk.Tk):
+	
 	
 	# __init__ function for class tkinterApp
 	def __init__(self, *args, **kwargs):
@@ -144,18 +146,27 @@ class SignInPage(tk.Frame):
 
 # second window frame page1
 class HomePage(tk.Frame):
-	def haha(self):
-		print("HI")
+	# def my_time(self):
+	# 	time_string = strftime("%m/%d/%Y %I:%M %p") # time format 
+	# 	self.dateandtime.config(text=time_string)
+	# 	threading.Timer(2.0, self.my_time).start()
+
+	# 	#l1.after(60000,self.my_time()) # time delay of 1000 milliseconds 
+
+	
 
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
 		
 		# Date and Time
-
 		# date_time = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
 		# date_time.place(relx=.3, rely=.1,anchor= 'c')
-		# DT = now.strftime("%m/%d/%Y %I:%M %p")
-		# dateandtime = Label(date_time, text = DT, font = LARGEFONT)
+		# dateandtime = Label(date_time, font = LARGEFONT)
+		# dateandtime.grid(row = 1, column = 0, padx = 10, pady = 10)
+
+		
+		# global dateandtime 
+		# dateandtime = Label(date_time, font = LARGEFONT)
 		# dateandtime.grid(row = 1, column = 0, padx = 10, pady = 10)
 
 		# Temperature
@@ -227,6 +238,20 @@ class HomePage(tk.Frame):
 		camera.place(relx=.75, rely=.25,anchor= 'c')
 		cameralabel = Label(camera, text = "cameralabel: ")
 		cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+	
+	
+	
+	def my_time(self):
+		date_time = LabelFrame(app, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
+		date_time.place(relx=.3, rely=.1,anchor= 'c')
+		dateandtime = Label(date_time, font = LARGEFONT)
+		dateandtime.grid(row = 1, column = 0, padx = 10, pady = 10)
+		time_string = strftime("%m/%d/%Y %I:%M %p") # time format 
+		
+		dateandtime.config(text=time_string)
+		threading.Timer(2.0, self.my_time).start()
+
+		#l1.after(60000,self.my_time()) # time delay of 1000 milliseconds 
 
 		
 
@@ -234,19 +259,15 @@ class HomePage(tk.Frame):
 app = tkinterApp()
 app.state('zoomed')
 app.title('Come-Thru')
-lol = HomePage()
-lol.haha()
-def my_time():
-    time_string = strftime("%m/%d/%Y %I:%M %p") # time format 
-    l1.config(text=time_string)
-    l1.after(60000,my_time) # time delay of 1000 milliseconds 
+lol = HomePage(app,app)
+
+
 	
 my_font=('times',52,'bold') # display size and style
 
-date_time = LabelFrame(app, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
-date_time.place(relx=.3, rely=.1,anchor= 'c')
-l1 = Label(date_time, font = LARGEFONT)
-l1.grid(row = 1, column = 0, padx = 10, pady = 10)
 
-my_time()
+#lol = HomePage()
+
+lol.my_time()
+
 app.mainloop()
