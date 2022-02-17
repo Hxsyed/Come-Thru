@@ -7,10 +7,14 @@ from tkinter import *
 from time import strftime
 import threading
 
+from check import rfid_check
+
 db = Database()
+rfid = rfid_check()
 now = datetime.now()
 LARGEFONT =("Verdana", 35)
 MEDIUMFONT =("Verdana", 20)
+
 
 class tkinterApp(tk.Tk):
 	
@@ -157,6 +161,7 @@ class HomePage(tk.Frame):
 
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
+		print(rfid.activate_rfid())
 		
 		# Date and Time
 		# date_time = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
@@ -257,7 +262,7 @@ class HomePage(tk.Frame):
 
 # Driver Code
 app = tkinterApp()
-app.state('zoomed')
+#app.state('zoomed')
 app.title('Come-Thru')
 lol = HomePage(app,app)
 

@@ -6,11 +6,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Connect to the database
-db = mysql.connector.connect(user=os.getenv("USER"), 
-                            password=os.getenv("DATABASE_PASSWORD"),
-                            host=os.getenv("HOST"),
-                            database=os.getenv("DATABASE_NAME"))
- 
+db = mysql.connector.connect(
+          
+          host="us-cdbr-east-05.cleardb.net",
+          user="bf3b65b19b9060",
+          passwd="de5e5e17",
+          database="heroku_182617f0d7b626c"
+        )
+WEATHER_API_KEY = "22d99c9ccdaf14ed6a6434a0471accba"
+
 mycursor = db.cursor()
 
 class Database:
@@ -60,12 +64,9 @@ class Database:
     
     def weather(self):
         
-        complete_api_link = "https://api.openweathermap.org/data/2.5/weather?q="+"New York, US"+"&appid="+os.getenv("WEATHER_API_KEY")
-        
+        complete_api_link = "https://api.openweathermap.org/data/2.5/weather?q="+"New York, US"+"&appid="+WEATHER_API_KEY
         api_link = requests.get(complete_api_link)
-        print(api_link)
         api_data = api_link.json()
-        
         # city name, temp, main, high, low
         city_name = api_data['name']
         temp = self.conv_k_to_f(api_data['main']['temp'])
