@@ -7,10 +7,10 @@ from tkinter import *
 from time import strftime
 import threading
 
-from check import rfid_check
+# from check import rfid_check
 
 db = Database()
-rfid = rfid_check()
+# rfid = rfid_check()
 now = datetime.now()
 LARGEFONT =("Verdana", 35)
 MEDIUMFONT =("Verdana", 20)
@@ -21,7 +21,7 @@ class tkinterApp(tk.Tk):
 	
 	# __init__ function for class tkinterApp
 	def __init__(self, *args, **kwargs):
-		
+		print("hello world")
 		# __init__ function for class Tk
 		tk.Tk.__init__(self, *args, **kwargs)
 		
@@ -119,7 +119,7 @@ class tkinterApp(tk.Tk):
 # first window frame startpage
 
 class SignInPage(tk.Frame):
-	def __init__(self, parent, controller):
+	def __init__(self, parent, controller): 
 		tk.Frame.__init__(self, parent)
 		
 		username = tk.StringVar()
@@ -150,30 +150,12 @@ class SignInPage(tk.Frame):
 
 # second window frame page1
 class HomePage(tk.Frame):
-	# def my_time(self):
-	# 	time_string = strftime("%m/%d/%Y %I:%M %p") # time format 
-	# 	self.dateandtime.config(text=time_string)
-	# 	threading.Timer(2.0, self.my_time).start()
-
-	# 	#l1.after(60000,self.my_time()) # time delay of 1000 milliseconds 
-
 	
 
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
-		print(rfid.activate_rfid())
-		
-		# Date and Time
-		# date_time = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
-		# date_time.place(relx=.3, rely=.1,anchor= 'c')
-		# dateandtime = Label(date_time, font = LARGEFONT)
-		# dateandtime.grid(row = 1, column = 0, padx = 10, pady = 10)
-
-		
-		# global dateandtime 
-		# dateandtime = Label(date_time, font = LARGEFONT)
-		# dateandtime.grid(row = 1, column = 0, padx = 10, pady = 10)
-
+		self.my_time()
+		self.rfid_activate()
 		# Temperature
 
 		weather = db.weather()
@@ -243,11 +225,13 @@ class HomePage(tk.Frame):
 		camera.place(relx=.75, rely=.25,anchor= 'c')
 		cameralabel = Label(camera, text = "cameralabel: ")
 		cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+
+		# self.my_time()
 	
 	
 	
 	def my_time(self):
-		date_time = LabelFrame(app, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
+		date_time = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
 		date_time.place(relx=.3, rely=.1,anchor= 'c')
 		dateandtime = Label(date_time, font = LARGEFONT)
 		dateandtime.grid(row = 1, column = 0, padx = 10, pady = 10)
@@ -255,24 +239,13 @@ class HomePage(tk.Frame):
 		
 		dateandtime.config(text=time_string)
 		threading.Timer(2.0, self.my_time).start()
-
-		#l1.after(60000,self.my_time()) # time delay of 1000 milliseconds 
+	def rfid_activate(self):
+		print("hello")
 
 		
 
 # Driver Code
 app = tkinterApp()
-#app.state('zoomed')
+app.geometry('1500x1000')
 app.title('Come-Thru')
-lol = HomePage(app,app)
-
-
-	
-my_font=('times',52,'bold') # display size and style
-
-
-#lol = HomePage()
-
-lol.my_time()
-
 app.mainloop()

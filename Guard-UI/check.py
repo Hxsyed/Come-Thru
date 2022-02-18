@@ -20,7 +20,7 @@ try:
         
 
 
-        id,text = reader.read();
+        id,text = reader.read()
         print(id)
         
         cursor = db.cursor()
