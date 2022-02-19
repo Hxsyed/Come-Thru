@@ -6,7 +6,9 @@ from datetime import datetime
 from tkinter import *
 from time import strftime
 import threading
-
+import time
+import RPi.GPIO as GPIO
+from mfrc522 import SimpleMFRC522
 # from check import rfid_check
 
 db = Database()
@@ -155,7 +157,7 @@ class HomePage(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
 		self.my_time()
-		self.rfid_activate()
+		self.activate_rfid()
 		# Temperature
 
 		weather = db.weather()
@@ -184,19 +186,19 @@ class HomePage(tk.Frame):
 
 		# RFID SCAN
 	
-		myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
-		myLabel.place(relx=.75, rely=.75,anchor= 'c')
+		#myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
+		#myLabel.place(relx=.75, rely=.75,anchor= 'c')
 
-		result = db.fetch(1091481150244)
+		#result = db.fetch(1091481150244)
 		
-		Name = Label(myLabel, text = "Name: "+result[0])
-		Name.grid(row = 1, column = 0, padx = 10, pady = 10)
+		#Name = Label(myLabel, text = "Name: "+result[0])
+		#Name.grid(row = 1, column = 0, padx = 10, pady = 10)
 		
-		empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]))
-		empl.grid(row = 2, column = 0, padx = 10, pady = 10)
+		#empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]))
+		#empl.grid(row = 2, column = 0, padx = 10, pady = 10)
 		
-		vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
-		vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
+		#vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
+		#vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
 
 		# EMPLID search 
 		EMPLID = tk.StringVar()
@@ -239,8 +241,26 @@ class HomePage(tk.Frame):
 		
 		dateandtime.config(text=time_string)
 		threading.Timer(2.0, self.my_time).start()
-	def rfid_activate(self):
-		print("hello")
+	def activate_rfid(self):
+		GPIO.setwarnings(False)	
+		reader = SimpleMFRC522()
+		id,text = reader.read()
+		result = db.fetch(id)
+        # RFID SCAN
+	
+		myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
+		myLabel.place(relx=.75, rely=.75,anchor= 'c')
+		
+		Name = Label(myLabel, text = "Name: "+result[0])
+		Name.grid(row = 1, column = 0, padx = 10, pady = 10)
+		
+		empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]))
+		empl.grid(row = 2, column = 0, padx = 10, pady = 10)
+		
+		vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
+		vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
+		GPIO.cleanup()
+		threading.Timer(2.0,self.activate_rfid).start()
 
 		
 

@@ -17,19 +17,12 @@ try:
     
     
         reader = SimpleMFRC522()
-        
-
-
         id,text = reader.read()
         print(id)
-        
         cursor = db.cursor()
         sql_select_Query = """select * from users WHERE RFID = %s"""
-        
-          
         cursor.execute(sql_select_Query,(id,))
         # get all records
-
         records = cursor.fetchall()
         #print("Total number of rows in table: ", cursor.rowcount)
         #print("\nPrinting each row")
