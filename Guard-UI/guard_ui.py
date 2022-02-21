@@ -13,7 +13,7 @@ from mfrc522 import SimpleMFRC522
 
 db = Database()
 # rfid = rfid_check()
-now = datetime.now()
+#now = datetime.now()
 LARGEFONT =("Verdana", 35)
 MEDIUMFONT =("Verdana", 20)
 
@@ -87,8 +87,8 @@ class tkinterApp(tk.Tk):
 	
 	def searchUser(self,EMPLID):
 		ret = db.search(EMPLID)
-		if(len(ret)==0):
-			messagebox.showerror("Error, User does not exist!")
+		if(ret=="NUF"):
+			messagebox.showerror("Error", "User does not exist")
 		else:
 			# ret1 = db.fetch(34566235)
 			self.popup_window(ret)
@@ -170,6 +170,7 @@ class HomePage(tk.Frame):
 		City = Label(weather_frame, text = "City: "+weather[0])
 		City.grid(row = 0, column = 0, padx = 10, pady = 10)
 
+
 		Temperature = Label(weather_frame, text = "Temperature: "+weather[1]+"°F")
 		Temperature.grid(row = 1, column = 0, padx = 10, pady = 10)
 
@@ -229,6 +230,28 @@ class HomePage(tk.Frame):
 		
 		dateandtime.config(text=time_string)
 		threading.Timer(2.0, self.my_time).start()
+	
+	#def camera(self):
+		#camera = LabelFrame(self, text= "Live Camera", font = MEDIUMFONT,padx = 10,pady = 10)-
+		#camera.place(relx=.75, rely=.25,anchor= 'c')-
+		
+		#L1 =Label(self)-
+		#L1.place(relx=.75, rely=.25,anchor= 'c')-
+		#cap = cv2.VideoCapture(0)
+		#cam = cv2.VideoCapture(0)-
+		#cv2image= cv2.cvtColor(cam.read()[1],cv2.COLOR_BGR2RGB)-
+		#img = Image.fromarray(cv2image).resize((500,500), Image.ANTIALIAS)-
+		# Convert image to PhotoImage
+		#imgtk = ImageTk.PhotoImage(image = img)-
+		#L1.imgtk = imgtk-
+		#L1.configure(image=imgtk)-
+		 # Repeat after an interval to capture continiously
+           #label.after(20, show_frames)	
+		#cv2.imwrite('/home/pi/testimage.jpg', image)
+		#cam.release()
+		#cv2.destroyAllWindows()
+		#threading.Timer(0.0001,self.camera).start()-
+		           
 
 	def activate_rfid(self):
 
@@ -239,7 +262,7 @@ class HomePage(tk.Frame):
         # RFID SCAN
 		myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
 		myLabel.place(relx=.75, rely=.75,anchor= 'c')
-		if(len(result)==0):
+		if(result=="IU"):
 			Error = Label(myLabel, text = "Error: User is unidentified")
 			Error.grid(row = 1, column = 0, padx = 10, pady = 10)
 			GPIO.cleanup()
@@ -254,9 +277,12 @@ class HomePage(tk.Frame):
 			
 			vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
 			vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
+			
+			temp = Label(myLabel, text = db.temp())
+			temp.grid(row = 4, column = 0, padx = 10, pady = 10)
 			GPIO.cleanup()
 			threading.Timer(2.0,self.activate_rfid).start()
-
+    
 		
 
 # Driver Code

@@ -20,7 +20,8 @@ while True:
         continue
 
 #max will give our temp in C
-print(np.max(frame))
+#print(np.max(frame))
 
 #convert to fahrenheit
 print((np.max(frame) *9/5) + 32)
+print(np.mean(frame))
