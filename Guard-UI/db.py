@@ -3,11 +3,10 @@ import os
 import requests
 import bcrypt
 from dotenv import load_dotenv
-load_dotenv()
 import time,board,busio
 import numpy as np
 import adafruit_mlx90640
-
+load_dotenv()
 # Connect to the database
 db = mysql.connector.connect(
           
@@ -29,25 +28,25 @@ mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_2_HZ
 class Database:
     
     def login(self, username, password):
+
         mycursor.execute("SELECT * FROM guards WHERE username = %s", (username,))
         rows = mycursor.fetchall()
         if(len(rows)>0):
             matched = bcrypt.checkpw(password.encode('utf8'), bytes(rows[0][2], 'utf-8'))
             if(matched):
+                mycursor.close()
                 return True
             else:
+                mycursor.close()
                 return ("IP")
         else:
+            mycursor.close()
             return False
     
     def fetch(self, RFID):
-        # fetch the data from the database using the RFID TAG
-        # select * from admins
-        # ("SELECT RFID FROM users WHERE RFID = ?", (RFID))
 
         mycursor.execute("SELECT * FROM users WHERE RFID = %s", (int(RFID),))
         rows = mycursor.fetchall()
-       # print(len(rows))
         if(len(rows)>0):
             full_name = rows[0][1] + " " + rows[0][2]
             empl = rows[0][5]
@@ -55,8 +54,6 @@ class Database:
             return(full_name, empl, vax)
         else:
             return("IU")
-        # for i in rows:
-        #     print(i[0][0])
 
     def search(self,EMPL):
         # search for the particular user when the pole cannot detect the user
@@ -67,10 +64,8 @@ class Database:
             full_name = rows[0][1] + " " + rows[0][2]
             empl = rows[0][5]
             vax = rows[0][4]
-            
             return (full_name, empl, vax)
         else:
-            #mycursor.close()
             return ('NUF')
     
     def weather(self):
@@ -90,6 +85,7 @@ class Database:
         F = (int(k) - 273.15) * 1.8 + 32
         format_float = "{:.2f}".format(F)
         return format_float
+
     def temp(self):
         #create frame then get a 1 sec temp values
         frame = np.zeros((24*32,))
@@ -99,9 +95,6 @@ class Database:
                 break
             except ValueError:
                 continue
-
-        #max will give our temp in C
-        #print(np.max(frame))
 
         #convert to fahrenheit
         print((np.max(frame) *9/5) + 32)

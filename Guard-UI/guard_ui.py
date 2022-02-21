@@ -1,29 +1,25 @@
 from tkinter import *
 import tkinter as tk
 from tkinter import Label, ttk, messagebox
-# from tkinter import messagebox
 from db import Database
-# from datetime import datetime
 from time import strftime
 import threading
-# import time
 import RPi.GPIO as GPIO
+import time
 from mfrc522 import SimpleMFRC522
-# from check import rfid_check
 
 db = Database()
-# rfid = rfid_check()
-#now = datetime.now()
 LARGEFONT =("Verdana", 35)
 MEDIUMFONT =("Verdana", 20)
-
+ALLOW_PIN = 17
+STANDBY_PIN = 18
+DENY_PIN = 19
 
 class tkinterApp(tk.Tk):
 	
 	
 	# __init__ function for class tkinterApp
 	def __init__(self, *args, **kwargs):
-		print("hello world")
 		# __init__ function for class Tk
 		tk.Tk.__init__(self, *args, **kwargs)
 		
@@ -81,9 +77,29 @@ class tkinterApp(tk.Tk):
 		if(auth=='Y'):
 			# Turn on the green led right on bred board
 			print(auth)
+			GPIO.setmode(GPIO.BCM)
+			GPIO.setup(ALLOW_PIN, GPIO.OUT)
+			GPIO.output(ALLOW_PIN, GPIO.HIGH)
+			time.sleep(1)
+			GPIO.output(ALLOW_PIN, GPIO.LOW)
+			GPIO.cleanup()
 		else:
 			# Turn on the red led right on bred board
 			print(auth)
+			GPIO.setmode(GPIO.BCM)
+			GPIO.setup(DENY_PIN, GPIO.OUT)
+			GPIO.output(DENY_PIN, GPIO.HIGH)
+			time.sleep(1)
+			GPIO.output(DENY_PIN, GPIO.LOW)
+			GPIO.cleanup()
+
+		# Turn on the orange led right on bred board to show standby mode
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(STANDBY_PIN, GPIO.OUT)
+		GPIO.output(STANDBY_PIN, GPIO.HIGH)
+		time.sleep(1)
+		GPIO.output(STANDBY_PIN, GPIO.LOW)
+		GPIO.cleanup()
 	
 	def searchUser(self,EMPLID):
 		ret = db.search(EMPLID)
@@ -215,8 +231,6 @@ class HomePage(tk.Frame):
 		camera.place(relx=.75, rely=.25,anchor= 'c')
 		cameralabel = Label(camera, text = "cameralabel: ")
 		cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
-
-		# self.my_time()
 	
 	
 	
