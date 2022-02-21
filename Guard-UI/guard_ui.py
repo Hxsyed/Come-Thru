@@ -1,12 +1,12 @@
-import tkinter as tk
-from tkinter import Label, ttk
-from tkinter import messagebox
-from db import Database
-from datetime import datetime
 from tkinter import *
+import tkinter as tk
+from tkinter import Label, ttk, messagebox
+# from tkinter import messagebox
+from db import Database
+# from datetime import datetime
 from time import strftime
 import threading
-import time
+# import time
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 # from check import rfid_check
@@ -87,9 +87,12 @@ class tkinterApp(tk.Tk):
 	
 	def searchUser(self,EMPLID):
 		ret = db.search(EMPLID)
-		ret1 = db.fetch(34566235)
-		self.popup_window(ret)
-	
+		if(len(ret)==0):
+			messagebox.showerror("Error, User does not exist!")
+		else:
+			# ret1 = db.fetch(34566235)
+			self.popup_window(ret)
+		
 	def popup_window(self,ret):
 		window = tk.Toplevel()
 		window.title('Student')
@@ -184,22 +187,6 @@ class HomePage(tk.Frame):
 		command = lambda : controller.show_frame(SignInPage))
 		signoutbutton.place(relx=.95, rely=.05,anchor= 'c')
 
-		# RFID SCAN
-	
-		#myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
-		#myLabel.place(relx=.75, rely=.75,anchor= 'c')
-
-		#result = db.fetch(1091481150244)
-		
-		#Name = Label(myLabel, text = "Name: "+result[0])
-		#Name.grid(row = 1, column = 0, padx = 10, pady = 10)
-		
-		#empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]))
-		#empl.grid(row = 2, column = 0, padx = 10, pady = 10)
-		
-		#vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
-		#vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
-
 		# EMPLID search 
 		EMPLID = tk.StringVar()
 		empllabelframe = LabelFrame(self, text= "EMPL ID", font = MEDIUMFONT,padx = 30,pady = 30)
@@ -233,6 +220,7 @@ class HomePage(tk.Frame):
 	
 	
 	def my_time(self):
+
 		date_time = LabelFrame(self, text= "", font = MEDIUMFONT,padx = 30,pady = 30)
 		date_time.place(relx=.3, rely=.1,anchor= 'c')
 		dateandtime = Label(date_time, font = LARGEFONT)
@@ -241,26 +229,33 @@ class HomePage(tk.Frame):
 		
 		dateandtime.config(text=time_string)
 		threading.Timer(2.0, self.my_time).start()
+
 	def activate_rfid(self):
+
 		GPIO.setwarnings(False)	
 		reader = SimpleMFRC522()
 		id,text = reader.read()
 		result = db.fetch(id)
         # RFID SCAN
-	
 		myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
 		myLabel.place(relx=.75, rely=.75,anchor= 'c')
-		
-		Name = Label(myLabel, text = "Name: "+result[0])
-		Name.grid(row = 1, column = 0, padx = 10, pady = 10)
-		
-		empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]))
-		empl.grid(row = 2, column = 0, padx = 10, pady = 10)
-		
-		vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
-		vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
-		GPIO.cleanup()
-		threading.Timer(2.0,self.activate_rfid).start()
+		if(len(result)==0):
+			Error = Label(myLabel, text = "Error: User is unidentified")
+			Error.grid(row = 1, column = 0, padx = 10, pady = 10)
+			GPIO.cleanup()
+			threading.Timer(2.0,self.activate_rfid).start()
+
+		else:
+			Name = Label(myLabel, text = "Name: "+result[0])
+			Name.grid(row = 1, column = 0, padx = 10, pady = 10)
+			
+			empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]))
+			empl.grid(row = 2, column = 0, padx = 10, pady = 10)
+			
+			vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
+			vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
+			GPIO.cleanup()
+			threading.Timer(2.0,self.activate_rfid).start()
 
 		
 
