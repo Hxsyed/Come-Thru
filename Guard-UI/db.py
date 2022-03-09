@@ -34,13 +34,10 @@ class Database:
         if(len(rows)>0):
             matched = bcrypt.checkpw(password.encode('utf8'), bytes(rows[0][2], 'utf-8'))
             if(matched):
-                mycursor.close()
                 return True
             else:
-                mycursor.close()
                 return ("IP")
         else:
-            mycursor.close()
             return False
     
     def fetch(self, RFID):
@@ -51,7 +48,8 @@ class Database:
             full_name = rows[0][1] + " " + rows[0][2]
             empl = rows[0][5]
             vax = rows[0][4]
-            return(full_name, empl, vax)
+            image = rows[0][6]
+            return(full_name, empl, vax, image)
         else:
             return("IU")
 

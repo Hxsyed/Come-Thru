@@ -7,6 +7,9 @@ import threading
 import RPi.GPIO as GPIO
 import time
 from mfrc522 import SimpleMFRC522
+from PIL import Image
+from PIL import ImageTk
+import io
 
 db = Database()
 LARGEFONT =("Verdana", 35)
@@ -227,10 +230,11 @@ class HomePage(tk.Frame):
 		deny.grid(row = 1, column = 0, padx = 10, pady = 10)
 
 		# Camera
-		camera = LabelFrame(self, text= "Live Camera", font = MEDIUMFONT,padx = 10,pady = 10)
-		camera.place(relx=.75, rely=.25,anchor= 'c')
-		cameralabel = Label(camera, text = "cameralabel: ")
-		cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+		#camera = LabelFrame(self, text= "Live Image", font = MEDIUMFONT,padx = 10,pady = 10)
+		#camera.place(relx=.75, rely=.25,anchor= 'c')
+		#cameralabel = Label(camera, text = "cameralabel: ")
+		#cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+		
 	
 	
 	
@@ -243,7 +247,7 @@ class HomePage(tk.Frame):
 		time_string = strftime("%m/%d/%Y %I:%M %p") # time format 
 		
 		dateandtime.config(text=time_string)
-		threading.Timer(2.0, self.my_time).start()
+		self.after(30000,self.my_time)
 	
 	#def camera(self):
 		#camera = LabelFrame(self, text= "Live Camera", font = MEDIUMFONT,padx = 10,pady = 10)-
@@ -280,7 +284,7 @@ class HomePage(tk.Frame):
 			Error = Label(myLabel, text = "Error: User is unidentified")
 			Error.grid(row = 1, column = 0, padx = 10, pady = 10)
 			GPIO.cleanup()
-			threading.Timer(2.0,self.activate_rfid).start()
+			self.after(5000,self.activate_rfid)
 
 		else:
 			Name = Label(myLabel, text = "Name: "+result[0])
@@ -294,13 +298,31 @@ class HomePage(tk.Frame):
 			
 			temp = Label(myLabel, text = db.temp())
 			temp.grid(row = 4, column = 0, padx = 10, pady = 10)
+			
+			fp = io.BytesIO(result[3])
+			
+			# load the image
+			image = Image.open(fp)
+			# drawing image to top window
+			render = ImageTk.PhotoImage(image)
+			img = Label(image=render)
+			img.image = render
+			camera = LabelFrame(self, text= "Live Image", font = MEDIUMFONT,padx = 10,pady = 10)
+			camera.place(relx=.75, rely=.35,anchor= 'c')
+			cameralabel = Label(camera, image=render)
+			cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+			#img.place(x=0, y=0)
+			#IMG = Label(myLabel, image=render)
+			#IMG.grid(row = 5, column = 0, padx = 10, pady = 10)
 			GPIO.cleanup()
-			threading.Timer(2.0,self.activate_rfid).start()
-    
-		
-
+			self.after(5000,self.activate_rfid)
 # Driver Code
 app = tkinterApp()
 app.geometry('1500x1000')
 app.title('Come-Thru')
+def on_closing():
+    if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        app.destroy()
+
+app.protocol("WM_DELETE_WINDOW", on_closing)
 app.mainloop()

@@ -42,6 +42,6 @@ except mysql.connector.Error as error:
 finally:
     if db.is_connected():
         db.close()
-        cursor.close()
+        #cursor.close()
         print("MySQL connection is closed")
     GPIO.cleanup()
