@@ -1,6 +1,7 @@
 import SignIn from './signIn/SignIn';
 import Students from './navbar/Students';
 import Admins from './navbar/Admins';
+import Guards from './navbar/Guards';
 import Admin from './admin/Admin';
 import Navbar from './navbar/Navbar';
 import Footer from './footer/Footer';
@@ -25,6 +26,9 @@ function App() {
         </Route>
         <Route exact path="/Admins">
             <Admins />
+        </Route>
+        <Route exact path="/Guards">
+            <Guards />
         </Route>
       </Switch>
     <Footer />

@@ -37,10 +37,19 @@ db.query("SELECT * FROM users;", (err, results) => {
 });
 
 app.get('/getAdmins', (req, res) => {
-db.query("SELECT * FROM admins;", (err, results) => {
-    if(err) throw err;
-    res.send(results);
+    db.query("SELECT * FROM admins;", (err, results) => {
+        if(err) throw err;
+        res.send(results);
+    });
 });
+
+app.get('/getGuards', (req, res) => {
+    console.log("I am here!")
+    db.query("SELECT * FROM guards;", (err, results) => {
+        if(err) throw err;
+        res.send(results);
+        console.log(results)
+    });
 });
 
 const verifyJWT = (req, res, next) => {
@@ -131,7 +140,7 @@ app.post("/register",async(req,res) => {
     const email = req.body.email;
     const EMPL = req.body.EMPL;
     const VAXInfo = req.body.VAXInfo;
-
+    const Profilepic = req.body.Profilepic;
     try {
         var val = await validateuser(EMPL);
         console.log(val)
@@ -142,8 +151,8 @@ app.post("/register",async(req,res) => {
         res.send({message: "User with given EMPL already exist!"});
     }
     else{
-        db.query("INSERT INTO users (RFID,First_name,Last_name,Email,Vaccination, EmplID) VALUES (?,?,?,?,?,?)",
-        [Math.random() * (1000000 - 0) + 0, firstname,lastname,email, VAXInfo, EMPL], 
+        db.query("INSERT INTO users (RFID,First_name,Last_name,Email,Vaccination,EmplID,Profpic) VALUES (?,?,?,?,?,?,?)",
+        [Math.random() * (1000000 - 0) + 0, firstname,lastname,email, VAXInfo, EMPL, Profilepic], 
         (err,result) => {
             if (err) {
                 //If error
@@ -299,6 +308,24 @@ app.post("/deleteAdmin", async (req,res) => {
             else{
                 //If success
             res.send({message: "Admin was deleted successfully!"});
+            //  console.log(result);
+            }
+        })
+})
+
+app.post("/deleteGuard", async (req,res) => {
+    const USER = req.body.Guarduser;
+    db.query("DELETE FROM guards WHERE username = ?",
+        [USER], 
+        (err,result) => {
+            if (err) {
+                //If error
+                res.send({err: err});
+                console.log(err);
+            } 
+            else{
+                //If success
+            res.send({message: "Guard was deleted successfully!"});
             //  console.log(result);
             }
         })

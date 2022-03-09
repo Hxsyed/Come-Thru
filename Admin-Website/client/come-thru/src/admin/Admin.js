@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -15,13 +16,68 @@ import validator from 'validator';
 import { useHistory } from 'react-router-dom';
 import { userData } from '../contexts/userprofile';
 import { axiosInstance } from '../util/config';
-
-
+import Modal from 'react-modal';
+import Camera, { IMAGE_TYPES } from 'react-html5-camera-photo';
+import 'react-html5-camera-photo/build/css/index.css';
 const theme = createTheme();
-
+const customStyles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)'
+  },
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+  },
+};
 export default function SignUp() {
     const history = useHistory();
     const [VAX, setVAX] = React.useState('');
+    const [dataUri, setDataUri] = useState('');
+    const [blob, setBlob] = useState(new Blob);
+    const [modalIsOpen, setIsOpen] = React.useState(false);
+    const [modalIsOpen1, setIsOpen1] = React.useState(false);
+    let subtitle;
+    function openModal() {
+      setIsOpen(true);
+    }
+  
+    function closeModal() {
+      setIsOpen(false);
+    }
+
+    function openModal1() {
+      setIsOpen1(true);
+    }
+  
+    function closeModal1() {
+      setIsOpen1(false);
+      setBlob(dataURItoBlob());
+    }
+
+    function dataURItoBlob () {
+      let byteString = atob(dataUri.split(',')[1]);
+    
+      // separate out the mime component
+      let mimeString = dataUri.split(',')[0].split(':')[1].split(';')[0];
+    
+      let ab = new ArrayBuffer(byteString.length);
+      let ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      let blob = new Blob([ab], {type: mimeString});
+      return blob;
+    }
+
     const handleChange = (event) => {
       console.log(event.target.value)
       setVAX(event.target.value);
@@ -42,6 +98,7 @@ export default function SignUp() {
     console.log(data.get('email'));
     console.log(data.get('EMPLID').length);
     console.log(VAX);
+    console.log(blob);
     // eslint-disable-next-line no-console
     if (!validator.isAlpha(data.get('firstName'))){
         alert("First Name can only contain letters!");
@@ -63,11 +120,15 @@ export default function SignUp() {
         alert("Please select a vaccination status!");
         return
     }
-    register(data.get('firstName'),data.get('lastName'),data.get('email'),data.get('EMPLID'), VAX)
+    if ((blob instanceof Blob)==false){
+      alert("Please take or retake the image!");
+      return
+    }
+    register(data.get('firstName'),data.get('lastName'),data.get('email'),data.get('EMPLID'), VAX, blob)
   };
 
 
-  const register = (firstnname,lastname,emailregister,emplregister,vaccinationstatus) => {
+  const register = (firstnname,lastname,emailregister,emplregister,vaccinationstatus, profpic) => {
     console.log("I am here")
     axiosInstance.post("/register",{
       firstnname: firstnname,
@@ -75,6 +136,7 @@ export default function SignUp() {
       email: emailregister,
       EMPL: emplregister,
       VAXInfo: vaccinationstatus,
+      Profilepic: profpic
     }).then((Response) => {
       if(Response.data.err){
         alert("Something went wrong check your field input and try again!");
@@ -160,9 +222,19 @@ export default function SignUp() {
       }
     });
   };
-
+  // Camera Functions
+  function handleTakePhoto (dataUri) {
+    // Do stuff with the photo...
+    console.log('takePhoto');
+    setDataUri(dataUri);
+    openModal1();
+  }
+  function handleCameraStop () {
+    console.log('handleCameraStop');
+  }
   return (
-    <ThemeProvider theme={theme}>
+    <div>
+    {/* <ThemeProvider theme={theme}> */}
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -218,11 +290,19 @@ export default function SignUp() {
             </Grid>
             <Box textAlign='center'>
                 <Button
-                type="submit"
+                // type="submit"
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                onClick={getRFIDTAG}
-                >
+                onClick={openModal}>
+                Photo
+                </Button>
+            </Box>
+            <Box textAlign='center'>
+                <Button
+                // type="submit"
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={getRFIDTAG}>
                 RFID
                 </Button>
             </Box>
@@ -318,6 +398,32 @@ export default function SignUp() {
           }
         </Box>
       </Container>
-    </ThemeProvider>
+    {/* </ThemeProvider> */}
+    <Modal
+    isOpen={modalIsOpen}
+    onRequestClose={closeModal}
+    style={customStyles}
+    transparent={true}
+    contentLabel="Example Modal"
+    >
+     <Camera
+        onTakePhoto = { (dataUri) => { handleTakePhoto(dataUri); } }
+        imageType = {IMAGE_TYPES.JPG}
+        onCameraStop = { () => { handleCameraStop(); } }
+      />
+    <button onClick={closeModal}>close</button>
+    </Modal>
+
+    <Modal
+    isOpen={modalIsOpen1}
+    onRequestClose={closeModal1}
+    style={customStyles}
+    transparent={true}
+    contentLabel="Example Modal1"
+    >
+     <img src={dataUri} />
+    <button onClick={closeModal1}>close</button>
+    </Modal>
+  </div>
   );
 }

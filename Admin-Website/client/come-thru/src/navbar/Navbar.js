@@ -57,6 +57,9 @@ export default function ButtonAppBar() {
               (userData.getRole()===0) && <Link to="/Admins"><Button color="inherit">Admins</Button></Link>
               }
               {
+              (userData.getRole()===0) && <Link to="/Guards"><Button color="inherit">Guards</Button></Link>
+              }
+              {
               (userData.getRole()===0 || userData.getRole()===1) &&  <Link to="/Students"><Button color="inherit">Students</Button></Link>
               }
               {
