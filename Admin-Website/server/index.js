@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {spawn} = require('child_process');
 const saltRounds = 10;
+const Buffer = require('safe-buffer').Buffer
 
 require('dotenv').config()
 
@@ -141,6 +142,10 @@ app.post("/register",async(req,res) => {
     const EMPL = req.body.EMPL;
     const VAXInfo = req.body.VAXInfo;
     const Profilepic = req.body.Profilepic;
+    const regex = /^data:.+\/(.+);base64,(.*)$/;
+    const matches = Profilepic.match(regex);
+    const data = matches[2];
+    const buffer = Buffer.from(data, 'base64');
     try {
         var val = await validateuser(EMPL);
         console.log(val)
@@ -152,7 +157,7 @@ app.post("/register",async(req,res) => {
     }
     else{
         db.query("INSERT INTO users (RFID,First_name,Last_name,Email,Vaccination,EmplID,Profpic) VALUES (?,?,?,?,?,?,?)",
-        [Math.random() * (1000000 - 0) + 0, firstname,lastname,email, VAXInfo, EMPL, Profilepic], 
+        [Math.random() * (1000000 - 0) + 0, firstname,lastname,email, VAXInfo, EMPL, buffer], 
         (err,result) => {
             if (err) {
                 //If error

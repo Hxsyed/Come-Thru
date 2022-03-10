@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState} from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -11,7 +11,6 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import validator from 'validator';
 import { useHistory } from 'react-router-dom';
 import { userData } from '../contexts/userprofile';
@@ -19,7 +18,6 @@ import { axiosInstance } from '../util/config';
 import Modal from 'react-modal';
 import Camera, { IMAGE_TYPES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
-const theme = createTheme();
 const customStyles = {
   overlay: {
     position: 'fixed',
@@ -42,10 +40,8 @@ export default function SignUp() {
     const history = useHistory();
     const [VAX, setVAX] = React.useState('');
     const [dataUri, setDataUri] = useState('');
-    const [blob, setBlob] = useState(new Blob);
     const [modalIsOpen, setIsOpen] = React.useState(false);
     const [modalIsOpen1, setIsOpen1] = React.useState(false);
-    let subtitle;
     function openModal() {
       setIsOpen(true);
     }
@@ -60,26 +56,8 @@ export default function SignUp() {
   
     function closeModal1() {
       setIsOpen1(false);
-      setBlob(dataURItoBlob());
     }
-
-    function dataURItoBlob () {
-      let byteString = atob(dataUri.split(',')[1]);
-    
-      // separate out the mime component
-      let mimeString = dataUri.split(',')[0].split(':')[1].split(';')[0];
-    
-      let ab = new ArrayBuffer(byteString.length);
-      let ia = new Uint8Array(ab);
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
-      let blob = new Blob([ab], {type: mimeString});
-      return blob;
-    }
-
     const handleChange = (event) => {
-      console.log(event.target.value)
       setVAX(event.target.value);
     };
 
@@ -93,12 +71,6 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log(data.get('firstName'));
-    console.log(data.get('lastName'));
-    console.log(data.get('email'));
-    console.log(data.get('EMPLID').length);
-    console.log(VAX);
-    console.log(blob);
     // eslint-disable-next-line no-console
     if (!validator.isAlpha(data.get('firstName'))){
         alert("First Name can only contain letters!");
@@ -116,20 +88,11 @@ export default function SignUp() {
         alert("EMPL ID can only contain numbers!");
         return
     }
-    if (validator.isEmpty(VAX)){
-        alert("Please select a vaccination status!");
-        return
-    }
-    if ((blob instanceof Blob)==false){
-      alert("Please take or retake the image!");
-      return
-    }
-    register(data.get('firstName'),data.get('lastName'),data.get('email'),data.get('EMPLID'), VAX, blob)
+    register(data.get('firstName'),data.get('lastName'),data.get('email'),data.get('EMPLID'), VAX, dataUri)
   };
 
 
   const register = (firstnname,lastname,emailregister,emplregister,vaccinationstatus, profpic) => {
-    console.log("I am here")
     axiosInstance.post("/register",{
       firstnname: firstnname,
       lastname: lastname, 
@@ -154,8 +117,6 @@ export default function SignUp() {
   const adminhandleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log(data.get('adminusername'));
-    console.log(data.get('adminpassword'));
     if (!validator.isAlpha(data.get('adminusername'))){
         alert("First Name can only contain letters!");
         history.push('/Home');
@@ -190,8 +151,6 @@ export default function SignUp() {
   const securityguardhandleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log(data.get('securityusername'));
-    console.log(data.get('securitypassword'));
     if (!validator.isAlpha(data.get('securityusername'))){
         alert("Username can only contain letters!");
         // history.push('/Home');
@@ -225,7 +184,6 @@ export default function SignUp() {
   // Camera Functions
   function handleTakePhoto (dataUri) {
     // Do stuff with the photo...
-    console.log('takePhoto');
     setDataUri(dataUri);
     openModal1();
   }
