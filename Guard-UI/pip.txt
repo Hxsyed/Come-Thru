@@ -3,3 +3,7 @@ pip install mysql-connector
 pip install bcrypt
 pip install python-dotenv
 pip install requests
+Pip install tk 
+Pip install mfrc522
+pip install adafruit-circuitpython-mlx90640
+sudo apt install default-libmysqlclient-dev
