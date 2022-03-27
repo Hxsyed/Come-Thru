@@ -3,13 +3,12 @@ import tkinter as tk
 from tkinter import Label, ttk, messagebox
 from db import Database
 from time import strftime
-import threading
 import RPi.GPIO as GPIO
 import time
 from mfrc522 import SimpleMFRC522
 from PIL import Image
 from PIL import ImageTk
-import io
+import io 
 
 db = Database()
 LARGEFONT =("Verdana", 35)
@@ -19,8 +18,7 @@ STANDBY_PIN = 18
 DENY_PIN = 19
 
 class tkinterApp(tk.Tk):
-	
-	
+
 	# __init__ function for class tkinterApp
 	def __init__(self, *args, **kwargs):
 		# __init__ function for class Tk
@@ -272,50 +270,57 @@ class HomePage(tk.Frame):
 		           
 
 	def activate_rfid(self):
-
-		GPIO.setwarnings(False)	
+		
+			
+		GPIO.setwarnings(False)
 		reader = SimpleMFRC522()
-		id,text = reader.read()
-		result = db.fetch(id)
-        # RFID SCAN
-		myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
-		myLabel.place(relx=.75, rely=.75,anchor= 'c')
-		if(result=="IU"):
-			Error = Label(myLabel, text = "Error: User is unidentified")
-			Error.grid(row = 1, column = 0, padx = 10, pady = 10)
-			GPIO.cleanup()
+		status = reader.read_no_block()
+		#print(status)
+		if status == (None,None):
+			#print('NO CARD')
 			self.after(5000,self.activate_rfid)
-
 		else:
-			Name = Label(myLabel, text = "Name: "+result[0])
-			Name.grid(row = 1, column = 0, padx = 10, pady = 10)
-			
-			empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]))
-			empl.grid(row = 2, column = 0, padx = 10, pady = 10)
-			
-			vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
-			vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
-			
-			temp = Label(myLabel, text = db.temp())
-			temp.grid(row = 4, column = 0, padx = 10, pady = 10)
-			
-			fp = io.BytesIO(result[3])
-			
-			# load the image
-			image = Image.open(fp)
-			# drawing image to top window
-			render = ImageTk.PhotoImage(image)
-			img = Label(image=render)
-			img.image = render
-			camera = LabelFrame(self, text= "Live Image", font = MEDIUMFONT,padx = 10,pady = 10)
-			camera.place(relx=.75, rely=.35,anchor= 'c')
-			cameralabel = Label(camera, image=render)
-			cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
-			#img.place(x=0, y=0)
-			#IMG = Label(myLabel, image=render)
-			#IMG.grid(row = 5, column = 0, padx = 10, pady = 10)
-			GPIO.cleanup()
-			self.after(5000,self.activate_rfid)
+			id,text = reader.read()
+			result = db.fetch(id)
+			# RFID SCAN
+			myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
+			myLabel.place(relx=.75, rely=.75,anchor= 'c')
+			if(result=="IU"):
+				Error = Label(myLabel, text = "Error: User is unidentified")
+				Error.grid(row = 1, column = 0, padx = 10, pady = 10)
+				GPIO.cleanup()
+				self.after(5000,self.activate_rfid)
+
+			else:
+				Name = Label(myLabel, text = "Name: "+result[0])
+				Name.grid(row = 1, column = 0, padx = 10, pady = 10)
+				
+				empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]))
+				empl.grid(row = 2, column = 0, padx = 10, pady = 10)
+				
+				vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
+				vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
+				
+				temp = Label(myLabel, text = db.temp())
+				temp.grid(row = 4, column = 0, padx = 10, pady = 10)
+				
+				fp = io.BytesIO(result[3])
+				
+				# load the image
+				image = Image.open(fp)
+				# drawing image to top window
+				render = ImageTk.PhotoImage(image)
+				img = Label(image=render)
+				img.image = render
+				camera = LabelFrame(self, text= "Live Image", font = MEDIUMFONT,padx = 10,pady = 10)
+				camera.place(relx=.75, rely=.35,anchor= 'c')
+				cameralabel = Label(camera, image=render)
+				cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+				#img.place(x=0, y=0)
+				#IMG = Label(myLabel, image=render)
+				#IMG.grid(row = 5, column = 0, padx = 10, pady = 10)
+				GPIO.cleanup()
+				self.after(5000,self.activate_rfid)
 # Driver Code
 app = tkinterApp()
 app.geometry('1500x1000')

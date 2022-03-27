@@ -93,7 +93,7 @@ class Database:
                 break
             except ValueError:
                 continue
-
-        #convert to fahrenheit
-        print((np.max(frame) *9/5) + 32)
-        return((np.max(frame) *9/5) + 32)
+            
+        #print(f"{np.max(frame)*9/5 + 32:.2f}\u00b0 F")    
+        return(f"{np.max(frame)*9/5 + 32:.2f}\u00b0 F")
+        
