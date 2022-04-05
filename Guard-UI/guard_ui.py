@@ -13,9 +13,9 @@ import io
 db = Database()
 LARGEFONT =("Verdana", 35)
 MEDIUMFONT =("Verdana", 20)
-ALLOW_PIN = 17
-STANDBY_PIN = 18
-DENY_PIN = 19
+ALLOW_PIN = 20
+STANDBY_PIN = 19
+DENY_PIN = 21
 
 class tkinterApp(tk.Tk):
 
@@ -47,8 +47,7 @@ class tkinterApp(tk.Tk):
 
 			frame.grid(row = 0, column = 0, sticky ="nsew")
 		#switched to HomePage 
-		self.show_frame(HomePage)
-
+		self.show_frame(SignInPage)
 	# to display the current frame passed as
 	# parameter
 	def show_frame(self, cont):
@@ -84,6 +83,9 @@ class tkinterApp(tk.Tk):
 			time.sleep(1)
 			GPIO.output(ALLOW_PIN, GPIO.LOW)
 			GPIO.cleanup()
+			
+			
+			
 		else:
 			# Turn on the red led right on bred board
 			print(auth)
@@ -277,8 +279,8 @@ class HomePage(tk.Frame):
 		status = reader.read_no_block()
 		#print(status)
 		if status == (None,None):
-			#print('NO CARD')
-			self.after(5000,self.activate_rfid)
+			print('NO CARD')
+			self.after(1000,self.activate_rfid)
 		else:
 			id,text = reader.read()
 			result = db.fetch(id)
@@ -288,6 +290,15 @@ class HomePage(tk.Frame):
 			if(result=="IU"):
 				Error = Label(myLabel, text = "Error: User is unidentified")
 				Error.grid(row = 1, column = 0, padx = 10, pady = 10)
+				
+				empl = Label(myLabel, text = "")
+				empl.grid(row = 2, column = 0, padx = 10, pady = 10)
+				
+				vacc = Label(myLabel, text = "")
+				vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
+				
+				temp = Label(myLabel, text = db.temp())
+				temp.grid(row = 4, column = 0, padx = 10, pady = 10)
 				GPIO.cleanup()
 				self.after(5000,self.activate_rfid)
 
