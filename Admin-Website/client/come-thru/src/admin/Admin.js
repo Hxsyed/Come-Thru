@@ -40,14 +40,17 @@ export default function SignUp() {
     const history = useHistory();
     const [VAX, setVAX] = React.useState('');
     const [dataUri, setDataUri] = useState('');
+    const [CameraStatus, setCameraStatus] = React.useState(false);
     const [modalIsOpen, setIsOpen] = React.useState(false);
     const [modalIsOpen1, setIsOpen1] = React.useState(false);
     function openModal() {
+      setCameraStatus(true)
       setIsOpen(true);
     }
   
     function closeModal() {
       setIsOpen(false);
+      handleCameraStop ()
     }
 
     function openModal1() {
@@ -188,8 +191,13 @@ export default function SignUp() {
     openModal1();
   }
   function handleCameraStop () {
+    // this.setState({ isCameraOpen:false })
+    setCameraStatus(false)
+    console.log(CameraStatus)
     console.log('handleCameraStop');
   }
+  
+
   return (
     <div>
     {/* <ThemeProvider theme={theme}> */}
@@ -364,11 +372,13 @@ export default function SignUp() {
     transparent={true}
     contentLabel="Example Modal"
     >
+    {CameraStatus===true &&
      <Camera
         onTakePhoto = { (dataUri) => { handleTakePhoto(dataUri); } }
+        idealResolution = {{width: 100, height: 100}}
         imageType = {IMAGE_TYPES.JPG}
-        onCameraStop = { () => { handleCameraStop(); } }
       />
+    }
     <button onClick={closeModal}>close</button>
     </Modal>
 
