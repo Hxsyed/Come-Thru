@@ -11,8 +11,6 @@ const s3 = new S3({
     secretAccessKey
 })
 
-//I am stupid
-
 
 function uploadFile(buffer, EMPLID){
     const uploadParams = {
