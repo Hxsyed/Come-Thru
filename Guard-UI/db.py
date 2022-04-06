@@ -5,6 +5,7 @@ import bcrypt
 from dotenv import load_dotenv
 import time,board,busio
 import numpy as np
+import boto3
 import adafruit_mlx90640
 load_dotenv()
 # Connect to the database
@@ -15,6 +16,9 @@ db = mysql.connector.connect(
           passwd="de5e5e17",
           database="heroku_182617f0d7b626c"
         )
+s3 = boto3.client('s3', aws_access_key_id="AKIASJV62RM7TT6A3IP5", 
+                                     aws_secret_access_key="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", 
+                                     region_name="us-east-1")
 WEATHER_API_KEY = "22d99c9ccdaf14ed6a6434a0471accba"
 
 mycursor = db.cursor()
@@ -47,9 +51,12 @@ class Database:
         if(len(rows)>0):
             full_name = rows[0][1] + " " + rows[0][2]
             empl = rows[0][5]
+            print(empl)
             vax = rows[0][4]
+            file_byte_string = s3.get_object(Bucket="comethru", Key=str(empl))['Body'].read()
+            
             image = rows[0][6]
-            return(full_name, empl, vax, image)
+            return(full_name, empl, vax, file_byte_string)
         else:
             return("IU")
 
