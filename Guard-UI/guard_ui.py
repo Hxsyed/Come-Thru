@@ -47,7 +47,7 @@ class tkinterApp(tk.Tk):
 
 			frame.grid(row = 0, column = 0, sticky ="nsew")
 		#switched to HomePage 
-		self.show_frame(SignInPage)
+		self.show_frame(HomePage)
 	# to display the current frame passed as
 	# parameter
 	def show_frame(self, cont):
