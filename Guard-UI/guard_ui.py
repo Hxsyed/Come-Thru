@@ -9,13 +9,26 @@ from mfrc522 import SimpleMFRC522
 from PIL import Image
 from PIL import ImageTk
 import io 
-
+import sys
+  
+# adding Folder_2 to the system path
+sys.path.insert(0, '/home/pi/Desktop/Come-Thru/Mask_Detection')
+from detect_mask_video import FaceMask
 db = Database()
+fm = FaceMask()
 LARGEFONT =("Verdana", 35)
 MEDIUMFONT =("Verdana", 20)
 ALLOW_PIN = 20
 STANDBY_PIN = 19
 DENY_PIN = 21
+BUZZER = 19
+
+global Buzz 
+
+B0=31
+C1=33
+CS1=35
+D1=37
 
 class tkinterApp(tk.Tk):
 
@@ -277,16 +290,27 @@ class HomePage(tk.Frame):
 		GPIO.setwarnings(False)
 		reader = SimpleMFRC522()
 		status = reader.read_no_block()
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(BUZZER, GPIO.OUT)
+		Buzz = GPIO.PWM(BUZZER, 800)
+		Buzz.start(10) 
 		#print(status)
 		if status == (None,None):
 			print('NO CARD')
+			Buzz.ChangeFrequency(B0)
+			time.sleep(0.13) 
+			Buzz.ChangeFrequency(C1)
+			time.sleep(0.13) 
+			Buzz.ChangeFrequency(CS1)
+			
+			result = db.fetch(1234)
 			self.after(1000,self.activate_rfid)
 		else:
 			id,text = reader.read()
 			result = db.fetch(id)
 			# RFID SCAN
 			myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
-			myLabel.place(relx=.75, rely=.75,anchor= 'c')
+			myLabel.place(relx=.75, rely=.80,anchor= 'c')
 			if(result=="IU"):
 				Error = Label(myLabel, text = "Error: User is unidentified")
 				Error.grid(row = 1, column = 0, padx = 10, pady = 10)
@@ -324,13 +348,14 @@ class HomePage(tk.Frame):
 				img = Label(image=render)
 				img.image = render
 				camera = LabelFrame(self, text= "Live Image", font = MEDIUMFONT,padx = 10,pady = 10)
-				camera.place(relx=.75, rely=.35,anchor= 'c')
+				camera.place(relx=.75, rely=.42,anchor= 'c')
 				cameralabel = Label(camera, image=render)
 				cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
 				#img.place(x=0, y=0)
 				#IMG = Label(myLabel, image=render)
 				#IMG.grid(row = 5, column = 0, padx = 10, pady = 10)
 				GPIO.cleanup()
+				fm.driver()
 				self.after(5000,self.activate_rfid)
 # Driver Code
 app = tkinterApp()
