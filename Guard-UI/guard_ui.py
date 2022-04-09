@@ -10,7 +10,19 @@ from PIL import Image
 from PIL import ImageTk
 import io 
 import sys
-  
+
+
+
+# libraries and packages
+from tensorflow.keras.applications.mobilenet_v3 import preprocess_input
+from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.models import load_model
+from imutils.video import VideoStream
+import numpy as np
+import imutils
+import cv2
+import os
+
 # adding Folder_2 to the system path
 sys.path.insert(0, '/home/pi/Desktop/Come-Thru/Mask_Detection')
 from detect_mask_video import FaceMask
@@ -19,7 +31,7 @@ fm = FaceMask()
 LARGEFONT =("Verdana", 35)
 MEDIUMFONT =("Verdana", 20)
 ALLOW_PIN = 20
-STANDBY_PIN = 19
+STANDBY_PIN = 23
 DENY_PIN = 21
 BUZZER = 19
 
@@ -29,6 +41,18 @@ B0=31
 C1=33
 CS1=35
 D1=37
+
+prototxtPath = r"/home/pi/Desktop/Come-Thru/Mask_Detection/face_detector/deploy.prototxt"
+weightsPath = r"/home/pi/Desktop/Come-Thru/Mask_Detection/face_detector/res10_300x300_ssd_iter_140000.caffemodel"
+global faceNet
+faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
+# load the face mask detector model from disk
+global maskNet
+maskNet = load_model("/home/pi/Desktop/Come-Thru/Mask_Detection/mask_detector_mnv3.model")
+# initialize the video stream
+#print("[INFO] starting video stream...")
+global vs
+vs = VideoStream(src=0).start()
 
 class tkinterApp(tk.Tk):
 
@@ -290,18 +314,18 @@ class HomePage(tk.Frame):
 		GPIO.setwarnings(False)
 		reader = SimpleMFRC522()
 		status = reader.read_no_block()
-		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(BUZZER, GPIO.OUT)
-		Buzz = GPIO.PWM(BUZZER, 800)
-		Buzz.start(10) 
+		#GPIO.setmode(GPIO.BCM)
+		#GPIO.setup(BUZZER, GPIO.OUT)
+		#Buzz = GPIO.output(BUZZER, 800)
+		#Buzz.start(10) 
 		#print(status)
 		if status == (None,None):
 			print('NO CARD')
-			Buzz.ChangeFrequency(B0)
-			time.sleep(0.13) 
-			Buzz.ChangeFrequency(C1)
-			time.sleep(0.13) 
-			Buzz.ChangeFrequency(CS1)
+			#Buzz.ChangeFrequency(B0)
+			#time.sleep(0.13) 
+			#Buzz.ChangeFrequency(C1)
+			#time.sleep(0.13) 
+			#Buzz.ChangeFrequency(CS1)
 			
 			result = db.fetch(1234)
 			self.after(1000,self.activate_rfid)
@@ -355,7 +379,12 @@ class HomePage(tk.Frame):
 				#IMG = Label(myLabel, image=render)
 				#IMG.grid(row = 5, column = 0, padx = 10, pady = 10)
 				GPIO.cleanup()
-				fm.driver()
+				
+				
+				
+				
+				fm.driver(vs,maskNet,faceNet)
+				GPIO.cleanup()
 				self.after(5000,self.activate_rfid)
 # Driver Code
 app = tkinterApp()

@@ -70,21 +70,12 @@ class FaceMask:
         # return a 2-tuple of the face locations and their corresponding
         # locations
         return (locs, preds)
-    def driver(self):
-        # load our serialized face detector model from disk
-        prototxtPath = r"/home/pi/Desktop/Come-Thru/Mask_Detection/face_detector/deploy.prototxt"
-        weightsPath = r"/home/pi/Desktop/Come-Thru/Mask_Detection/face_detector/res10_300x300_ssd_iter_140000.caffemodel"
-        faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
-
-        # load the face mask detector model from disk
-        maskNet = load_model("/home/pi/Desktop/Come-Thru/Mask_Detection/mask_detector_mnv3.model")
-
-        # initialize the video stream
-        #print("[INFO] starting video stream...")
-        vs = VideoStream(src=0).start()
+    def driver(self,vs,maskNet,faceNet):
+        
 
         # loop over the frames from the video stream
-        while True:
+        #while True:
+        for i in range (5):
             # grab the frame from the threaded video stream and resize it
             # to have a maximum width of 400 pixels
             frame = vs.read()
@@ -129,5 +120,5 @@ class FaceMask:
                 break
 
         # do a bit of cleanup
-        cv2.destroyAllWindows()
-        vs.stop()
+        #cv2.destroyAllWindows()
+        #vs.stop()
