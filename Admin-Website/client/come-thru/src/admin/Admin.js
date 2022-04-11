@@ -17,12 +17,7 @@ import { userData } from '../contexts/userprofile';
 import { axiosInstance } from '../util/config';
 import Modal from 'react-modal';
 import Camera, { IMAGE_TYPES } from 'react-html5-camera-photo';
-import { SerialPort } from 'serialport';
 import 'react-html5-camera-photo/build/css/index.css';
-const port = new SerialPort({
-  path: '/dev/tty-usbserial1',
-  baudRate: 57600,
-})
 const customStyles = {
   overlay: {
     position: 'fixed',
@@ -45,14 +40,17 @@ export default function SignUp() {
     const history = useHistory();
     const [VAX, setVAX] = React.useState('');
     const [dataUri, setDataUri] = useState('');
+    const [CameraStatus, setCameraStatus] = React.useState(false);
     const [modalIsOpen, setIsOpen] = React.useState(false);
     const [modalIsOpen1, setIsOpen1] = React.useState(false);
     function openModal() {
+      setCameraStatus(true)
       setIsOpen(true);
     }
   
     function closeModal() {
       setIsOpen(false);
+      handleCameraStop ()
     }
 
     function openModal1() {
@@ -67,14 +65,10 @@ export default function SignUp() {
     };
 
     const getRFIDTAG = () => {
-    // Switches the port into "flowing mode"
-    port.on('data', function (data) {
-      console.log('Data:', data)
-    })
-    // axiosInstance.post("/RFIDRegister",{
-    // }).then((Response) => {
-    //   console.log(Response);
-    // });
+    axiosInstance.post("/RFIDRegister",{
+    }).then((Response) => {
+      console.log(Response);
+    });
   }
 
   const handleSubmit = (event) => {
@@ -197,8 +191,13 @@ export default function SignUp() {
     openModal1();
   }
   function handleCameraStop () {
+    // this.setState({ isCameraOpen:false })
+    setCameraStatus(false)
+    console.log(CameraStatus)
     console.log('handleCameraStop');
   }
+  
+
   return (
     <div>
     {/* <ThemeProvider theme={theme}> */}
@@ -373,11 +372,15 @@ export default function SignUp() {
     transparent={true}
     contentLabel="Example Modal"
     >
+    {CameraStatus===true &&
      <Camera
         onTakePhoto = { (dataUri) => { handleTakePhoto(dataUri); } }
+        idealResolution = {{width: 600, height: 350}}
         imageType = {IMAGE_TYPES.JPG}
-        onCameraStop = { () => { handleCameraStop(); } }
+        //onCameraStop = { () => { handleCameraStop(); } }
+        
       />
+    }
     <button onClick={closeModal}>close</button>
     </Modal>
 
