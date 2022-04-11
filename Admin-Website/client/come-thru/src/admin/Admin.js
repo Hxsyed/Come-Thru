@@ -17,7 +17,12 @@ import { userData } from '../contexts/userprofile';
 import { axiosInstance } from '../util/config';
 import Modal from 'react-modal';
 import Camera, { IMAGE_TYPES } from 'react-html5-camera-photo';
+import { SerialPort } from 'serialport';
 import 'react-html5-camera-photo/build/css/index.css';
+const port = new SerialPort({
+  path: '/dev/tty-usbserial1',
+  baudRate: 57600,
+})
 const customStyles = {
   overlay: {
     position: 'fixed',
@@ -62,10 +67,14 @@ export default function SignUp() {
     };
 
     const getRFIDTAG = () => {
-    axiosInstance.post("/RFIDRegister",{
-    }).then((Response) => {
-      console.log(Response);
-    });
+    // Switches the port into "flowing mode"
+    port.on('data', function (data) {
+      console.log('Data:', data)
+    })
+    // axiosInstance.post("/RFIDRegister",{
+    // }).then((Response) => {
+    //   console.log(Response);
+    // });
   }
 
   const handleSubmit = (event) => {
