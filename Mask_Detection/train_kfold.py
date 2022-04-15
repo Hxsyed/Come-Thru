@@ -1,19 +1,20 @@
 # import the necessary packages
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.applications import MobileNetV2
-from tensorflow.keras.layers import AveragePooling2D
+from tensorflow.keras.applications import MobileNetV3Small
+from tensorflow.keras.layers import MaxPooling2D, Dense, Flatten, Conv2D,AveragePooling2D
 from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Input
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.applications.mobilenet_v3 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.preprocessing.image import load_img
+from tensorflow.keras.losses import sparse_categorical_crossentropy
 from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelBinarizer
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold, train_test_split
 from sklearn.metrics import classification_report
 from imutils import paths
 import matplotlib.pyplot as plt
@@ -23,10 +24,11 @@ import os
 # initialize the initial learning rate, number of epochs to train for,
 # and batch size
 INIT_LR = 1e-4
-EPOCHS = 20
+EPOCHS = 3
 BS = 32
 
-DIRECTORY = r"/Users/mdzakir/Desktop/Face-Mask-Detection-master/dataset"
+
+DIRECTORY = r"/home/pi/Desktop/Face-Mask-Detection/dataset"
 CATEGORIES = ["with_mask", "without_mask"]
 
 # grab the list of images in our dataset directory, then initialize
@@ -55,8 +57,15 @@ labels = to_categorical(labels)
 data = np.array(data, dtype="float32")
 labels = np.array(labels)
 
-(trainX, testX, trainY, testY) = train_test_split(data, labels,
-	test_size=0.20, stratify=labels, random_state=42)
+kf = KFold(n_splits = 5)
+
+for train_index, test_index  in kf.split(data):
+    trainX, testX = data[train_index], data[test_index]
+    trainY, testY = labels[train_index], labels[test_index]
+
+
+#(trainX, testX, trainY, testY) = train_test_split(data, labels,
+	#test_size=0.20, stratify=labels, random_state=42)
 
 # construct the training image generator for data augmentation
 aug = ImageDataGenerator(
@@ -70,7 +79,7 @@ aug = ImageDataGenerator(
 
 # load the MobileNetV2 network, ensuring the head FC layer sets are
 # left off
-baseModel = MobileNetV2(weights="imagenet", include_top=False,
+baseModel = MobileNetV3Small(weights="imagenet", include_top=False,
 	input_tensor=Input(shape=(224, 224, 3)))
 
 # construct the head of the model that will be placed on top of the
@@ -120,7 +129,7 @@ print(classification_report(testY.argmax(axis=1), predIdxs,
 
 # serialize the model to disk
 print("[INFO] saving mask detector model...")
-model.save("mask_detector.model", save_format="h5")
+model.save("mask_detector_v3.model", save_format="h5")
 
 # plot the training loss and accuracy
 N = EPOCHS
@@ -134,4 +143,4 @@ plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
-plt.savefig("plot.png")
+plt.savefig("plotv3.png")
