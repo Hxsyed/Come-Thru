@@ -39,6 +39,7 @@ const customStyles = {
 export default function SignUp() {
     const history = useHistory();
     const [VAX, setVAX] = React.useState('');
+    const [regtype, setregtype] = React.useState(1);
     const [dataUri, setDataUri] = useState('');
     const [CameraStatus, setCameraStatus] = React.useState(false);
     const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -62,6 +63,9 @@ export default function SignUp() {
     }
     const handleChange = (event) => {
       setVAX(event.target.value);
+    };
+    const handleuserChange = (event) => {
+      setregtype(event.target.value);
     };
 
     const getRFIDTAG = () => {
@@ -214,6 +218,22 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Registration
           </Typography>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Type</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={regtype}
+              label="Age"
+              onChange={handleuserChange}
+            >
+              <MenuItem value={1}>Admin</MenuItem>
+              <MenuItem value={2}>Guard</MenuItem>
+              <MenuItem value={3}>Student</MenuItem>
+            </Select>
+          </FormControl>
+          {
+            ((userData.getStatus()===true) && (regtype===3)) &&
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -294,8 +314,9 @@ export default function SignUp() {
               Register Student
             </Button>
           </Box>
+          }
           {
-            ((userData.getStatus()===true) && (userData.getRole()===0)) &&
+            ((userData.getStatus()===true) && (userData.getRole()===0) && (regtype===1)) &&
             <Box component="form" noValidate onSubmit={adminhandleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} >
@@ -329,7 +350,7 @@ export default function SignUp() {
           </Box>
           }
           {
-            ((userData.getStatus()===true) && (userData.getRole()===0)) &&
+            ((userData.getStatus()===true) && (userData.getRole()===0) && (regtype===2)) &&
             <Box component="form" noValidate onSubmit={securityguardhandleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} >

@@ -22,4 +22,13 @@ function uploadFile(buffer, EMPLID){
     }
     return s3.upload(uploadParams).promise()
 }
+
+function deleteFile(EMPLID){
+    const deleteParams = {
+        Bucket: bucketname,
+        Key: EMPLID.toString()
+    }
+    return s3.deleteObject(deleteParams).promise()
+}
 exports.uploadFile = uploadFile
+exports.deleteFile = deleteFile

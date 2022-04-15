@@ -4,7 +4,7 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {spawn} = require('child_process');
-const {uploadFile} = require('./s3')
+const {uploadFile, deleteFile} = require('./s3')
 const saltRounds = 10;
 const Buffer = require('safe-buffer').Buffer
 
@@ -158,7 +158,6 @@ app.post("/register",async(req,res) => {
     }
     else{
         const result = await uploadFile(buffer, EMPL)
-        console.log(result.Location);
         db.query("INSERT INTO users (RFID,First_name,Last_name,Email,Vaccination,EmplID,Profpic) VALUES (?,?,?,?,?,?,?)",
         [Math.random() * (1000000 - 0) + 0, firstname,lastname,email, VAXInfo, EMPL, result.Location], 
      
@@ -290,7 +289,7 @@ app.post("/deleteStudent", async (req,res) => {
     const EMPLID = req.body.EMPLID;
     db.query("DELETE FROM users WHERE EmplID = ?",
         [EMPLID], 
-        (err,result) => {
+        async (err) => {
             if (err) {
                 //If error
                 res.send({err: err});
@@ -298,8 +297,8 @@ app.post("/deleteStudent", async (req,res) => {
             } 
             else{
                 //If success
-            res.send({message: "Student was deleted successfully!"});
-            //  console.log(result);
+                await deleteFile(EMPLID)
+                res.send({message: "Student was deleted successfully!"});
             }
         })
 })
