@@ -11,6 +11,8 @@ from PIL import ImageTk
 import io 
 import sys
 
+import pygame
+path = "/home/pi/Desktop/zapsplat_bells_medium_bell_soft_strike_long_decay_002_60153.mp3"
 
 
 # libraries and packages
@@ -109,37 +111,48 @@ class tkinterApp(tk.Tk):
 			messagebox.showerror("Sign In", "Incorrect Password")
 		else:
 			messagebox.showerror("Sign In", "User does not exist")
-	
+		
 	def authentication(self,auth):
 		if(auth=='Y'):
 			# Turn on the green led right on bred board
 			print(auth)
-			GPIO.setmode(GPIO.BCM)
-			GPIO.setup(ALLOW_PIN, GPIO.OUT)
-			GPIO.output(ALLOW_PIN, GPIO.HIGH)
-			time.sleep(1)
-			GPIO.output(ALLOW_PIN, GPIO.LOW)
-			GPIO.cleanup()
-			
-			
-			
+			self.greenlight()
 		else:
-			# Turn on the red led right on bred board
+			# Turn on the red led right on bread board
 			print(auth)
-			GPIO.setmode(GPIO.BCM)
-			GPIO.setup(DENY_PIN, GPIO.OUT)
-			GPIO.output(DENY_PIN, GPIO.HIGH)
-			time.sleep(1)
-			GPIO.output(DENY_PIN, GPIO.LOW)
-			GPIO.cleanup()
+			self.redlight()
+			
 
 		# Turn on the orange led right on bred board to show standby mode
+		self.yellowlight()
+		
+	
+	def redlight(self):
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(DENY_PIN, GPIO.OUT)
+		GPIO.output(DENY_PIN, GPIO.HIGH)
+		time.sleep(1)
+		GPIO.output(DENY_PIN, GPIO.LOW)
+		GPIO.cleanup()
+	
+	def greenlight(self):
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(ALLOW_PIN, GPIO.OUT)
+		GPIO.output(ALLOW_PIN, GPIO.HIGH)
+		time.sleep(1)
+		GPIO.output(ALLOW_PIN, GPIO.LOW)
+		GPIO.cleanup()
+	def yellowlight(self):
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(STANDBY_PIN, GPIO.OUT)
 		GPIO.output(STANDBY_PIN, GPIO.HIGH)
 		time.sleep(1)
 		GPIO.output(STANDBY_PIN, GPIO.LOW)
 		GPIO.cleanup()
+        
+        
+        
+        
 	
 	def searchUser(self,EMPLID):
 		ret = db.search(EMPLID)
@@ -217,6 +230,7 @@ class HomePage(tk.Frame):
 		tk.Frame.__init__(self, parent)
 		self.my_time()
 		self.activate_rfid()
+		
 		# Temperature
 
 		weather = db.weather()
@@ -266,12 +280,6 @@ class HomePage(tk.Frame):
 		command = lambda : controller.authentication("N"))
 		deny.grid(row = 1, column = 0, padx = 10, pady = 10)
 
-		# Camera
-		#camera = LabelFrame(self, text= "Live Image", font = MEDIUMFONT,padx = 10,pady = 10)
-		#camera.place(relx=.75, rely=.25,anchor= 'c')
-		#cameralabel = Label(camera, text = "cameralabel: ")
-		#cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
-		
 	
 	
 	
@@ -285,48 +293,33 @@ class HomePage(tk.Frame):
 		
 		dateandtime.config(text=time_string)
 		self.after(30000,self.my_time)
-	
-	#def camera(self):
-		#camera = LabelFrame(self, text= "Live Camera", font = MEDIUMFONT,padx = 10,pady = 10)-
-		#camera.place(relx=.75, rely=.25,anchor= 'c')-
-		
-		#L1 =Label(self)-
-		#L1.place(relx=.75, rely=.25,anchor= 'c')-
-		#cap = cv2.VideoCapture(0)
-		#cam = cv2.VideoCapture(0)-
-		#cv2image= cv2.cvtColor(cam.read()[1],cv2.COLOR_BGR2RGB)-
-		#img = Image.fromarray(cv2image).resize((500,500), Image.ANTIALIAS)-
-		# Convert image to PhotoImage
-		#imgtk = ImageTk.PhotoImage(image = img)-
-		#L1.imgtk = imgtk-
-		#L1.configure(image=imgtk)-
-		 # Repeat after an interval to capture continiously
-           #label.after(20, show_frames)	
-		#cv2.imwrite('/home/pi/testimage.jpg', image)
-		#cam.release()
-		#cv2.destroyAllWindows()
-		#threading.Timer(0.0001,self.camera).start()-
 		           
 
+	def redlight(self):
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(DENY_PIN, GPIO.OUT)
+		GPIO.output(DENY_PIN, GPIO.HIGH)
+		time.sleep(2)
+		GPIO.output(DENY_PIN, GPIO.LOW)
+		GPIO.cleanup()
+	
+	def greenlight(self):
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(ALLOW_PIN, GPIO.OUT)
+		GPIO.output(ALLOW_PIN, GPIO.HIGH)
+		time.sleep(2)
+		GPIO.output(ALLOW_PIN, GPIO.LOW)
+		GPIO.cleanup()
+	
 	def activate_rfid(self):
 		
 			
 		GPIO.setwarnings(False)
 		reader = SimpleMFRC522()
 		status = reader.read_no_block()
-		#GPIO.setmode(GPIO.BCM)
-		#GPIO.setup(BUZZER, GPIO.OUT)
-		#Buzz = GPIO.output(BUZZER, 800)
-		#Buzz.start(10) 
-		#print(status)
+		
 		if status == (None,None):
 			print('NO CARD')
-			#Buzz.ChangeFrequency(B0)
-			#time.sleep(0.13) 
-			#Buzz.ChangeFrequency(C1)
-			#time.sleep(0.13) 
-			#Buzz.ChangeFrequency(CS1)
-			
 			result = db.fetch(1234)
 			self.after(1000,self.activate_rfid)
 		else:
@@ -336,8 +329,22 @@ class HomePage(tk.Frame):
 			myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
 			myLabel.place(relx=.75, rely=.80,anchor= 'c')
 			if(result=="IU"):
+				print("I am here!")
+				result = db.fetch(0)
+				fp = io.BytesIO(result[3])
+				# load the image
+				image = Image.open(fp)
+				# drawing image to top window
+				render = ImageTk.PhotoImage(image)
+				img = Label(image=render)
+				img.image = render
 				Error = Label(myLabel, text = "Error: User is unidentified")
 				Error.grid(row = 1, column = 0, padx = 10, pady = 10)
+				camera = LabelFrame(self, text= "Student", font = MEDIUMFONT,padx = 10,pady = 10)
+				camera.place(relx=.75, rely=.42,anchor= 'c')
+				cameralabel = Label(camera, image=render,borderwidth = 5,background="red")
+				cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+				
 				
 				empl = Label(myLabel, text = "")
 				empl.grid(row = 2, column = 0, padx = 10, pady = 10)
@@ -347,10 +354,15 @@ class HomePage(tk.Frame):
 				
 				temp = Label(myLabel, text = db.temp())
 				temp.grid(row = 4, column = 0, padx = 10, pady = 10)
+				
 				GPIO.cleanup()
-				self.after(5000,self.activate_rfid)
+				self.after(3000,self.activate_rfid)
 
 			else:
+				pygame.mixer.init()
+				pygame.mixer.music.load(path)
+				pygame.mixer.music.play()
+				
 				Name = Label(myLabel, text = "Name: "+result[0])
 				Name.grid(row = 1, column = 0, padx = 10, pady = 10)
 				
@@ -360,7 +372,7 @@ class HomePage(tk.Frame):
 				vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
 				vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
 				
-				temp = Label(myLabel, text = db.temp())
+				temp = Label(myLabel, text = db.temp() + "\u00b0 F")
 				temp.grid(row = 4, column = 0, padx = 10, pady = 10)
 				
 				fp = io.BytesIO(result[3])
@@ -371,21 +383,23 @@ class HomePage(tk.Frame):
 				render = ImageTk.PhotoImage(image)
 				img = Label(image=render)
 				img.image = render
-				camera = LabelFrame(self, text= "Live Image", font = MEDIUMFONT,padx = 10,pady = 10)
+				camera = LabelFrame(self, text= "Student", font = MEDIUMFONT,padx = 10,pady = 10)
 				camera.place(relx=.75, rely=.42,anchor= 'c')
-				cameralabel = Label(camera, image=render)
-				cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
-				#img.place(x=0, y=0)
-				#IMG = Label(myLabel, image=render)
-				#IMG.grid(row = 5, column = 0, padx = 10, pady = 10)
+				
 				GPIO.cleanup()
-				
-				
-				
-				
-				fm.driver(vs,maskNet,faceNet)
+				if(fm.driver(vs,maskNet,faceNet) == "Mask" and float(db.temp()) <100.4 and result!="IU"):
+					cameralabel = Label(camera, image=render,borderwidth = 10,background="green")
+					cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+					self.greenlight()
+					
+				else:
+					cameralabel = Label(camera, image=render,borderwidth = 10,background="red")
+					cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+					self.redlight()
+                    
+                
 				GPIO.cleanup()
-				self.after(5000,self.activate_rfid)
+				self.after(3000,self.activate_rfid)
 # Driver Code
 app = tkinterApp()
 app.geometry('1500x1000')

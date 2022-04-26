@@ -48,6 +48,7 @@ class FaceMask:
 
                 # extract the face ROI, convert it from BGR to RGB channel
                 # ordering, resize it to 224x224, and preprocess it
+                
                 face = frame[startY:endY, startX:endX]
                 face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
                 face = cv2.resize(face, (224, 224))
@@ -95,12 +96,14 @@ class FaceMask:
                 # determine the class label and color we'll use to draw
                 # the bounding box and text
         # 		label = "Mask"
-                if mask > withoutMask:label = "Mask"
+                if mask > withoutMask:label = "Mask" 
                 else: label = "No Mask"
                 
                 
                 #color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
                 print(label)
+                
+                return (label)
 
                 # include the probability in the label
                 #label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)

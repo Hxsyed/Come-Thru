@@ -102,5 +102,5 @@ class Database:
                 continue
             
         #print(f"{np.max(frame)*9/5 + 32:.2f}\u00b0 F")    
-        return(f"{np.max(frame)*9/5 + 32:.2f}\u00b0 F")
+        return(f"{np.max(frame)*9/5 + 32:.2f}")
         
