@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState} from 'react';
+import { useState, useEffect} from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -15,6 +15,9 @@ import validator from 'validator';
 import { useHistory } from 'react-router-dom';
 import { userData } from '../contexts/userprofile';
 import { axiosInstance } from '../util/config';
+import ktof from 'kelvin-to-fahrenheit';
+import Clock from 'react-live-clock';
+import date from 'date-and-time';
 import Modal from 'react-modal';
 import Camera, { IMAGE_TYPES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
@@ -36,14 +39,20 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
   },
 };
+const now = new Date();
 export default function SignUp() {
     const history = useHistory();
     const [VAX, setVAX] = React.useState('');
-    const [regtype, setregtype] = React.useState(1);
+    const [regtype, setregtype] = React.useState(3);
     const [dataUri, setDataUri] = useState('');
     const [CameraStatus, setCameraStatus] = React.useState(false);
     const [modalIsOpen, setIsOpen] = React.useState(false);
     const [modalIsOpen1, setIsOpen1] = React.useState(false);
+    const [city_name, setcityname] = React.useState('');
+    const [temp, settemp] = React.useState('');
+    const [desc, setdesc] = React.useState('');
+    const [htemp, sethtemp] = React.useState('');
+    const [ltemp, setltemp] = React.useState('');
     function openModal() {
       setCameraStatus(true)
       setIsOpen(true);
@@ -197,11 +206,24 @@ export default function SignUp() {
   function handleCameraStop () {
     // this.setState({ isCameraOpen:false })
     setCameraStatus(false)
-    console.log(CameraStatus)
-    console.log('handleCameraStop');
   }
   
-
+  useEffect(() => {
+    fetch("https://api.openweathermap.org/data/2.5/weather?q="+"New York, US"+"&appid="+process.env.REACT_APP_WEATHER_API_KEY)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          setcityname(result['name'])
+          setdesc(result['weather'][0]['description'])
+          sethtemp(result['main']['temp_max'])
+          setltemp(result['main']['temp_min'])
+          settemp(result['main']['temp'])
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
+  }, [])
   return (
     <div>
     {/* <ThemeProvider theme={theme}> */}
@@ -215,11 +237,37 @@ export default function SignUp() {
             alignItems: 'center',
           }}
         >
+          <div style={{ display: "flex" }}>
+            <Typography component="h1" variant="h5">
+            <Clock format={('HH:mm')} ticking={true} timezone={'US/Eastern'} />  
+            </Typography>
+            <Typography variant="title" color="inherit" noWrap>
+              &nbsp;
+            </Typography>
+            <Typography component="h1" variant="h5">
+            {date.format(now, 'ddd, MMM DD YYYY')}
+            </Typography>
+          </div>
+          <div style={{ display: "inline", alignItems:'center'}}>
+            <Typography component="h1" variant="h5">
+            City: {city_name} | Temp: {ktof(parseInt(temp))} ºF
+            </Typography>
+            <Typography component="h1" variant="h5">
+            &nbsp; &nbsp; &nbsp; &nbsp;Description: {desc}
+            </Typography>
+            <Typography component="h1" variant="h5">
+            &nbsp;High: {ktof(parseInt(htemp))} ºF | Low: {ktof(parseInt(ltemp))} ºF
+            </Typography>
+            <Typography variant="title" color="inherit" noWrap>
+              &nbsp;
+             </Typography>
+          </div>
           <Typography component="h1" variant="h5">
             Registration
           </Typography>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Type</InputLabel>
+            { (userData.getRole()===0) &&
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -231,6 +279,18 @@ export default function SignUp() {
               <MenuItem value={2}>Guard</MenuItem>
               <MenuItem value={3}>Student</MenuItem>
             </Select>
+            }
+            { (userData.getRole()===1) &&
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={regtype}
+              label="Age"
+              onChange={handleuserChange}
+            >
+              <MenuItem value={3}>Student</MenuItem>
+            </Select>
+            }
           </FormControl>
           {
             ((userData.getStatus()===true) && (regtype===3)) &&

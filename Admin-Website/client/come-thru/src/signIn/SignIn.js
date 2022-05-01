@@ -25,12 +25,10 @@ export default function SignIn() {
       username: usernameSignIn,
       password: passwordSignIn,
     }).then((Response) => {
-      console.log(Response)
       if(Response.data.message){
         setloginstatus(Response.data.message)
         return
       }
-      console.log(Response.data);
       if(Response.data.result.length>0){
         localStorage.setItem("token", Response.data.token)
         if(Response.data.result[0].role === 0){

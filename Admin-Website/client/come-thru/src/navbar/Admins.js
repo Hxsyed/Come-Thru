@@ -15,7 +15,6 @@ export default function BasicTable() {
 
     async function getStudents(){
     await axiosInstance.get("/getAdmins").then((Response) => {
-        console.log(Response)
         setAdmins(Response.data);
         })
     }

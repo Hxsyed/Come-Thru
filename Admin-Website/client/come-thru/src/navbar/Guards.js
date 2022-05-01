@@ -15,7 +15,6 @@ export default function BasicTable() {
     
     async function getStudents(){
     await axiosInstance.get("/getGuards").then((Response) => {
-        console.log(Response)
         setGuards(Response.data);
         })
     }

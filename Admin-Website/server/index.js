@@ -46,11 +46,9 @@ app.get('/getAdmins', (req, res) => {
 });
 
 app.get('/getGuards', (req, res) => {
-    console.log("I am here!")
     db.query("SELECT * FROM guards;", (err, results) => {
         if(err) throw err;
         res.send(results);
-        console.log(results)
     });
 });
 
@@ -85,15 +83,12 @@ app.get("/", (req,res) => {
 app.post("/login",(req,res) => {
     const username = req.body.username;
     const password = req.body.password;
-    console.log(username,password);
-    console.log("Hello World");
     db.query("SELECT * FROM admins WHERE user = ?;",
     username,
     (err,result) => {
         if(err){
             res.send({err: err});
         }
-        console.log({result});
         if(result.length>0){ 
             bcrypt.compare(password,result[0].password, (err,response) => {
                 if(response){
@@ -149,7 +144,6 @@ app.post("/register",async(req,res) => {
     const buffer = Buffer.from(data, 'base64');
     try {
         var val = await validateuser(EMPL);
-        console.log(val)
       } catch (err) {
         console.log(err);
       }
@@ -170,7 +164,6 @@ app.post("/register",async(req,res) => {
             else{
                 //If success
             res.send({message: "Registration completed successsfully!"});
-            //  console.log(result);
             }
         })
     }
@@ -222,7 +215,6 @@ app.post("/registeradmin", async (req,res) => {
             else{
                 //If success
             res.send({message: "Admin Registration completed successsfully!"});
-            //  console.log(result);
             }
         })
       })
@@ -252,7 +244,6 @@ function validateguard(username){
 app.post("/registerguard", async (req,res) => {
     const username = req.body.guardusername;
     const password = req.body.guardpassword;
-    console.log(username, password)
     try {
         var val = await validateguard(username);
       } catch (err) {
@@ -277,7 +268,6 @@ app.post("/registerguard", async (req,res) => {
             else{
                 //If success
                 res.send({message: "Security Guard Registration completed successsfully!"});
-                console.log(result);
             }
         })
       })
@@ -316,7 +306,6 @@ app.post("/deleteAdmin", async (req,res) => {
             else{
                 //If success
             res.send({message: "Admin was deleted successfully!"});
-            //  console.log(result);
             }
         })
 })
@@ -334,7 +323,6 @@ app.post("/deleteGuard", async (req,res) => {
             else{
                 //If success
             res.send({message: "Guard was deleted successfully!"});
-            //  console.log(result);
             }
         })
 })
@@ -359,7 +347,3 @@ app.post("/RFIDRegister", (req,res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
-// app.listen(process.env.PORT || 3001, ()=> {
-//     console.log("running on port 3001");
-// })
