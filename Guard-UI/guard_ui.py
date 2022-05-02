@@ -4,15 +4,17 @@ from tkinter import Label, ttk, messagebox
 from db import Database
 from time import strftime
 import RPi.GPIO as GPIO
+#dont think we need the bottom import
 import time
 from mfrc522 import SimpleMFRC522
-from PIL import Image
-from PIL import ImageTk
+from PIL import Image, ImageTk
+#dont think we need the bottom import
+#from PIL import ImageTk
 import io 
 import sys
 
 import pygame
-path = "/home/pi/Desktop/zapsplat_bells_medium_bell_soft_strike_long_decay_002_60153.mp3"
+path = "/home/pi/Desktop/Come-Thru/Guard-UI/sound.mp3"
 
 
 # libraries and packages
