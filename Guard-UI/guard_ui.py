@@ -14,8 +14,9 @@ import io
 import sys
 
 import pygame
-path = "/home/pi/Desktop/Come-Thru/Guard-UI/sound.mp3"
-
+sound = "/home/pi/Desktop/Come-Thru/Guard-UI/sound.mp3"
+denied = "/home/pi/Desktop/Come-Thru/Guard-UI/denied.mp3" 
+success = "/home/pi/Desktop/Come-Thru/Guard-UI/success.mp3"
 
 # libraries and packages
 from tensorflow.keras.applications.mobilenet_v3 import preprocess_input
@@ -330,8 +331,11 @@ class HomePage(tk.Frame):
 			# RFID SCAN
 			myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
 			myLabel.place(relx=.75, rely=.80,anchor= 'c')
+			pygame.mixer.init()
+			pygame.mixer.music.load(sound)
+			pygame.mixer.music.play()
 			if(result=="IU"):
-				print("I am here!")
+				#print("I am here!")
 				result = db.fetch(0)
 				fp = io.BytesIO(result[3])
 				# load the image
@@ -344,9 +348,11 @@ class HomePage(tk.Frame):
 				Error.grid(row = 1, column = 0, padx = 10, pady = 10)
 				camera = LabelFrame(self, text= "Student", font = MEDIUMFONT,padx = 10,pady = 10)
 				camera.place(relx=.75, rely=.42,anchor= 'c')
-				cameralabel = Label(camera, image=render,borderwidth = 5,background="red")
+				cameralabel = Label(camera, image=render,borderwidth = 10,background="red")
 				cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
-				
+				pygame.mixer.init()
+				pygame.mixer.music.load(denied)
+				pygame.mixer.music.play()
 				
 				empl = Label(myLabel, text = "")
 				empl.grid(row = 2, column = 0, padx = 10, pady = 10)
@@ -361,9 +367,9 @@ class HomePage(tk.Frame):
 				self.after(3000,self.activate_rfid)
 
 			else:
-				pygame.mixer.init()
-				pygame.mixer.music.load(path)
-				pygame.mixer.music.play()
+				#pygame.mixer.init()
+				#pygame.mixer.music.load(sound)
+				#pygame.mixer.music.play()
 				
 				Name = Label(myLabel, text = "Name: "+result[0])
 				Name.grid(row = 1, column = 0, padx = 10, pady = 10)
@@ -389,15 +395,21 @@ class HomePage(tk.Frame):
 				camera.place(relx=.75, rely=.42,anchor= 'c')
 				
 				GPIO.cleanup()
-				if(fm.driver(vs,maskNet,faceNet) == "Mask" and float(db.temp()) <100.4 and result!="IU"):
+				if(fm.driver(vs,maskNet,faceNet) == "Mask" and float(db.temp()) <101.5 and result!="IU"):
+					pygame.mixer.init()
+					pygame.mixer.music.load(success)
+					pygame.mixer.music.play()
 					cameralabel = Label(camera, image=render,borderwidth = 10,background="green")
 					cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
 					self.greenlight()
-					
 				else:
+					pygame.mixer.init()
+					pygame.mixer.music.load(denied)
+					pygame.mixer.music.play()
 					cameralabel = Label(camera, image=render,borderwidth = 10,background="red")
 					cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
 					self.redlight()
+					
                     
                 
 				GPIO.cleanup()
