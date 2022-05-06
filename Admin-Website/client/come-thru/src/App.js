@@ -4,7 +4,6 @@ import Admins from './navbar/Admins';
 import Guards from './navbar/Guards';
 import Admin from './admin/Admin';
 import Navbar from './navbar/Navbar';
-import Footer from './footer/Footer';
 import {Route,Switch,useLocation} from "react-router-dom";
 
 
@@ -31,7 +30,6 @@ function App() {
             <Guards />
         </Route>
       </Switch>
-    <Footer />
   </div> 
   );
 }

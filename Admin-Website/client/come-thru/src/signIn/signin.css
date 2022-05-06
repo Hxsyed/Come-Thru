@@ -1,4 +1,21 @@
 .sign-in-container{
     margin-top: 150px;
-    margin-bottom:260px;
+    margin-bottom:325px;
+    overflow: auto;
+
 }
+
+.div-1{
+    background: linear-gradient(90deg, rgb(28, 233, 199) 0%, rgb(131, 9, 231) 100%);
+
+}
+
+.div-2{
+    background: linear-gradient(90deg, rgb(131, 9, 231) 0%, rgb(151, 28, 233)  100%);
+
+}
+.main{
+    position: absolute;
+    height: 100%;
+}
+

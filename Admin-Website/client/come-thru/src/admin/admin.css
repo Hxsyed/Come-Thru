@@ -1,0 +1,22 @@
+.admin-container{
+    margin-top: 0px;
+    margin-bottom:177px;
+    background-color: #FCF6F5FF;
+}
+/* #FCF6F5FF */
+.daddymd{
+    margin-top: 0px;
+    background-color: #FCF6F5FF;
+}
+
+.div-1{
+    background: linear-gradient(90deg, #00539CFF 0%, #89ABE3FF 100%);
+}
+
+.div-2{
+    background: linear-gradient(90deg, #89ABE3FF 0%, #00539CFF  100%);
+}
+.main{
+    position: absolute;
+    height: 100%;
+}

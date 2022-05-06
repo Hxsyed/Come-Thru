@@ -27,7 +27,6 @@ Open http://localhost:3000 to view it in the browser.
   - `src`   
     - `admin/` : The main page for the logged in admin
     - `contexts/` : Has all the authorization & authentication implementation for creating an account, logging in and signing out
-    - `footer/` : The code for the footer bar and its many states
     - `navbar/` : The code for the navigation bar and its many states
     - `signIn/` : A page that lets a user log into the website
     - `util/` : Has config functions needed to communicate with the backend

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import './admin.css';
+import 'react-clock/dist/Clock.css';
 import { useState, useEffect} from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,6 +13,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import validator from 'validator';
 import { useHistory } from 'react-router-dom';
 import { userData } from '../contexts/userprofile';
@@ -20,7 +23,20 @@ import Clock from 'react-live-clock';
 import date from 'date-and-time';
 import Modal from 'react-modal';
 import Camera, { IMAGE_TYPES } from 'react-html5-camera-photo';
+import { makeStyles } from "@material-ui/core/styles";
 import 'react-html5-camera-photo/build/css/index.css';
+import Glock from 'react-clock';
+import ReactWeather, { useOpenWeather } from 'react-open-weather';
+import zIndex from '@mui/material/styles/zIndex';
+const theme = createTheme();
+const useStyles = makeStyles({
+  container: {
+    minHeight: 100,
+    fontSize: 30,
+    textAlign: "center"
+  }
+});
+
 const customStyles = {
   overlay: {
     position: 'fixed',
@@ -28,7 +44,8 @@ const customStyles = {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)'
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    zIndex: 1 
   },
   content: {
     top: "50%",
@@ -41,6 +58,20 @@ const customStyles = {
 };
 const now = new Date();
 export default function SignUp() {
+    const { data, isLoading, errorMessage } = useOpenWeather({
+      key: process.env.REACT_APP_WEATHER_API_KEY,
+      lat: '40.7128',
+      lon: '-74.0060',
+      lang: 'en',
+      unit: 'imperial', // values are (metric, standard, imperial)
+    }); 
+    // console.log(data?.current.time)
+    const [value, setValue] = useState(new Date());
+    if (data) {
+      data.current.date = value.toString()
+    } 
+      // console.log(data.current.date)
+    const classes = useStyles();
     const history = useHistory();
     const [VAX, setVAX] = React.useState('');
     const [regtype, setregtype] = React.useState(3);
@@ -48,11 +79,9 @@ export default function SignUp() {
     const [CameraStatus, setCameraStatus] = React.useState(false);
     const [modalIsOpen, setIsOpen] = React.useState(false);
     const [modalIsOpen1, setIsOpen1] = React.useState(false);
-    const [city_name, setcityname] = React.useState('');
-    const [temp, settemp] = React.useState('');
-    const [desc, setdesc] = React.useState('');
-    const [htemp, sethtemp] = React.useState('');
-    const [ltemp, setltemp] = React.useState('');
+    if(userData.getStatus()===false){
+      history.push('/'); 
+    }
     function openModal() {
       setCameraStatus(true)
       setIsOpen(true);
@@ -209,60 +238,42 @@ export default function SignUp() {
   }
   
   useEffect(() => {
-    fetch("https://api.openweathermap.org/data/2.5/weather?q="+"New York, US"+"&appid="+process.env.REACT_APP_WEATHER_API_KEY)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setcityname(result['name'])
-          setdesc(result['weather'][0]['description'])
-          sethtemp(result['main']['temp_max'])
-          setltemp(result['main']['temp_min'])
-          settemp(result['main']['temp'])
-        },
-        (error) => {
-          console.log(error)
-        }
-      )
+      const interval = setInterval(() => setValue(new Date()), 60000);
+      return () => {
+        clearInterval(interval);
+      };
   }, [])
   return (
-    <div>
-    {/* <ThemeProvider theme={theme}> */}
-      <Container component="main" maxWidth="xs">
+    <Grid container className = 'main' direction="row" spacing={0}>
+          <Grid className="div-1" item xs>
+            <div className={classes.container}></div>
+          </Grid>
+      
+          <Grid className='daddymd' item xs>
+          <div className={classes.container}>
+            <ThemeProvider theme={theme}>
+      <Container component="main" maxWidth="sm" className='admin-container'>
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 5,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
           }}
         >
-          <div style={{ display: "flex" }}>
-            <Typography component="h1" variant="h5">
-            <Clock format={('HH:mm')} ticking={true} timezone={'US/Eastern'} />  
-            </Typography>
-            <Typography variant="title" color="inherit" noWrap>
-              &nbsp;
-            </Typography>
-            <Typography component="h1" variant="h5">
-            {date.format(now, 'ddd, MMM DD YYYY')}
-            </Typography>
+          <div style={{ display: "flex", alignItems:'center'}}>
+             <ReactWeather
+              isLoading={isLoading}
+              errorMessage={errorMessage}
+              data={data}
+              lang="en"
+              locationLabel="New York"
+              unitsLabels={{ temperature: 'F', windSpeed: 'Km/h' }}
+              showForecast = {false}
+            />
           </div>
-          <div style={{ display: "inline", alignItems:'center'}}>
-            <Typography component="h1" variant="h5">
-            City: {city_name} | Temp: {ktof(parseInt(temp))} ºF
-            </Typography>
-            <Typography component="h1" variant="h5">
-            &nbsp; &nbsp; &nbsp; &nbsp;Description: {desc}
-            </Typography>
-            <Typography component="h1" variant="h5">
-            &nbsp;High: {ktof(parseInt(htemp))} ºF | Low: {ktof(parseInt(ltemp))} ºF
-            </Typography>
-            <Typography variant="title" color="inherit" noWrap>
-              &nbsp;
-             </Typography>
-          </div>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" style={{marginTop:"20px",marginBottom:"20px"}}>
             Registration
           </Typography>
           <FormControl fullWidth>
@@ -445,36 +456,39 @@ export default function SignUp() {
           }
         </Box>
       </Container>
-    {/* </ThemeProvider> */}
-    <Modal
-    isOpen={modalIsOpen}
-    onRequestClose={closeModal}
-    style={customStyles}
-    transparent={true}
-    contentLabel="Example Modal"
-    >
-    {CameraStatus===true &&
-     <Camera
-        onTakePhoto = { (dataUri) => { handleTakePhoto(dataUri); } }
-        idealResolution = {{width: 600, height: 350}}
-        imageType = {IMAGE_TYPES.JPG}
-        //onCameraStop = { () => { handleCameraStop(); } }
-        
-      />
-    }
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        transparent={true}
+        contentLabel="Example Modal"
+      >
+      {CameraStatus===true &&
+      <Camera
+          onTakePhoto = { (dataUri) => { handleTakePhoto(dataUri); } }
+          idealResolution = {{width: 600, height: 350}}
+          imageType = {IMAGE_TYPES.JPG}
+        />
+      }
     <button onClick={closeModal}>close</button>
     </Modal>
 
     <Modal
-    isOpen={modalIsOpen1}
-    onRequestClose={closeModal1}
-    style={customStyles}
-    transparent={true}
-    contentLabel="Example Modal1"
+      isOpen={modalIsOpen1}
+      onRequestClose={closeModal1}
+      style={customStyles}
+      transparent={true}
+      contentLabel="Example Modal1"
     >
      <img src={dataUri} />
     <button onClick={closeModal1}>close</button>
     </Modal>
-  </div>
+        </ThemeProvider>
+          </div>
+        </Grid>
+      <Grid className="div-2"item xs>
+        <div className={classes.container} ></div>
+      </Grid>
+    </Grid>
   );
 }

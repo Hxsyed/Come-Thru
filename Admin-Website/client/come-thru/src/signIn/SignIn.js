@@ -13,13 +13,26 @@ import { useHistory } from 'react-router-dom';
 import { userData } from '../contexts/userprofile';
 import { axiosInstance } from '../util/config';
 import validator from 'validator';
+import { makeStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import Link from '@mui/material/Link';
 
 const theme = createTheme();
+
+const useStyles = makeStyles({
+  container: {
+    minHeight: 100,
+    fontSize: 30,
+    textAlign: "center"
+  }
+});
+
+
 
 export default function SignIn() {
   const history = useHistory();
   const [loginstatus, setloginstatus] = React.useState(false)
-
+  const classes = useStyles();
   const logIn = (usernameSignIn,passwordSignIn) => {
     axiosInstance.post("/login",{
       username: usernameSignIn,
@@ -70,54 +83,87 @@ export default function SignIn() {
     else logIn(data.get('user'), data.get('password'))
   };
 
+  
+
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs" className='sign-in-container'>
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
+      <Grid container className = 'main' direction="row" spacing={0}>
+          <Grid className="div-1" item xs>
+            <div className={classes.container}></div>
+          </Grid>
+      
+          <Grid  item xs>
+          <div className={classes.container}>
+            <ThemeProvider theme={theme}>
+      
+            <Container component="main" maxWidth="xs" className='sign-in-container'>
+              <CssBaseline />
+              <Box
+                sx={{
+                  marginTop: 8,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+              <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Sign in
+              </Typography>
+              <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="user"
+                  label="Username"
+                  name="user"
+                  autoFocus
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Sign In
+                </Button>
+                  
+              </Box>
+              
+            </Box>
+            
+          </Container>
+          <Typography variant="body2" color="text.secondary" align="center">
+              {'Copyright © '}
+              <Link color="inherit" href="">
+              Come-Thru
+              </Link>{' '}
+              {new Date().getFullYear()}
+              {'.'}
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="user"
-              label="Username"
-              name="user"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-          </Box>
-        </Box>
-      </Container>
-    </ThemeProvider>
+          
+        </ThemeProvider>
+        
+          </div>
+          
+        </Grid>
+
+        
+  
+      <Grid className="div-2"item xs>
+        <div className={classes.container} ></div>
+      </Grid>
+    </Grid>
   );
 }
