@@ -39,7 +39,6 @@ ALLOW_PIN = 20
 STANDBY_PIN = 23
 DENY_PIN = 21
 BUZZER = 19
-
 global Buzz 
 
 B0=31
@@ -264,7 +263,7 @@ class HomePage(tk.Frame):
 		# EMPLID search 
 		EMPLID = tk.StringVar()
 		empllabelframe = LabelFrame(self, text= "EMPL ID", font = MEDIUMFONT,padx = 30,pady = 30)
-		empllabelframe.place(relx=.25, rely=.25,anchor= 'c')
+		empllabelframe.place(relx=.235, rely=.27,anchor= 'c')
 		EMPLIDEntry = ttk.Entry(empllabelframe,textvariable=EMPLID)
 		EMPLIDEntry.grid(row = 2, column = 4, padx = 10, pady = 10)
 		findbutton = tk.Button(empllabelframe, text ="FIND", bg='grey', fg='white',
@@ -273,7 +272,7 @@ class HomePage(tk.Frame):
 		
 		# Authentication
 		buttonLabel = LabelFrame(self, text= "Authentication", font = MEDIUMFONT,padx = 10,pady = 10)
-		buttonLabel.place(relx=.25, rely=.75,anchor= 'c')
+		buttonLabel.place(relx=.20, rely=.75,anchor= 'c')
 		# Approve Button 
 		approve = tk.Button(buttonLabel, text ="YES", bg='green', fg='white',
 		command = lambda : controller.authentication("Y"))
@@ -315,8 +314,6 @@ class HomePage(tk.Frame):
 		GPIO.cleanup()
 	
 	def activate_rfid(self):
-		
-			
 		GPIO.setwarnings(False)
 		reader = SimpleMFRC522()
 		status = reader.read_no_block()
@@ -329,8 +326,8 @@ class HomePage(tk.Frame):
 			id,text = reader.read()
 			result = db.fetch(id)
 			# RFID SCAN
-			myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 30,pady = 30)
-			myLabel.place(relx=.75, rely=.80,anchor= 'c')
+			myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 10,pady = 10)
+			myLabel.place(relx=.728, rely=.82,anchor= 'c')
 			pygame.mixer.init()
 			pygame.mixer.music.load(sound)
 			pygame.mixer.music.play()
@@ -344,24 +341,32 @@ class HomePage(tk.Frame):
 				render = ImageTk.PhotoImage(image)
 				img = Label(image=render)
 				img.image = render
-				Error = Label(myLabel, text = "Error: User is unidentified")
-				Error.grid(row = 1, column = 0, padx = 10, pady = 10)
+				Error = Label(myLabel, text = "Unidentified User",font = LARGEFONT,width=20, height=1)
+				Error.grid(row = 1, column = 0, padx = 6, pady = 4)
 				camera = LabelFrame(self, text= "Student", font = MEDIUMFONT,padx = 10,pady = 10)
-				camera.place(relx=.75, rely=.42,anchor= 'c')
+				camera.place(relx=.732, rely=.42,anchor= 'c')
 				cameralabel = Label(camera, image=render,borderwidth = 10,background="red")
 				cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+				
+				decision1 = LabelFrame(self, text= "Decision", font = MEDIUMFONT)
+				decision1.place(relx=0.24, rely=0.50,anchor= 'c')
+				decision1Label = Label(decision1, text= "NOT Registered", font = MEDIUMFONT,width=20, height=6,background="red")
+				decision1Label.grid(row = 7, column = 0, padx = 10, pady = 10)
+				
 				pygame.mixer.init()
 				pygame.mixer.music.load(denied)
 				pygame.mixer.music.play()
 				
-				empl = Label(myLabel, text = "")
-				empl.grid(row = 2, column = 0, padx = 10, pady = 10)
+				temp = Label(myLabel, text = db.temp()+"°F",font = LARGEFONT,width=20, height=1)
+				temp.grid(row = 2, column = 0, padx = 6, pady = 4)
 				
-				vacc = Label(myLabel, text = "")
-				vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
+				empl = Label(myLabel, text = "",font = LARGEFONT,width=20, height=1)
+				empl.grid(row = 3, column = 0, padx = 6, pady = 4)
 				
-				temp = Label(myLabel, text = db.temp())
-				temp.grid(row = 4, column = 0, padx = 10, pady = 10)
+				vacc = Label(myLabel, text = "",font = LARGEFONT,width=20, height=1)
+				vacc.grid(row = 4, column = 0, padx = 6, pady = 4)
+				
+				
 				
 				GPIO.cleanup()
 				self.after(3000,self.activate_rfid)
@@ -371,17 +376,21 @@ class HomePage(tk.Frame):
 				#pygame.mixer.music.load(sound)
 				#pygame.mixer.music.play()
 				
-				Name = Label(myLabel, text = "Name: "+result[0])
-				Name.grid(row = 1, column = 0, padx = 10, pady = 10)
+				Name = Label(myLabel, text = "Name: "+result[0],font = LARGEFONT,width=20, height=1)
+				Name.grid(row = 1, column = 0, padx = 6, pady = 4)
 				
-				empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]))
-				empl.grid(row = 2, column = 0, padx = 10, pady = 10)
+				empl = Label(myLabel, text = " EMPL ID: "+ str(result[1]),font = LARGEFONT,width=20, height=1)
+				empl.grid(row = 2, column = 0, padx = 6, pady = 4)
 				
-				vacc = Label(myLabel, text = " Vaccination Status: "+str(result[2]))
-				vacc.grid(row = 3, column = 0, padx = 10, pady = 10)
+				if(str(result[2])=='1'):
+					vacc = Label(myLabel, text = " Vaccinated ",font = LARGEFONT,width=20, height=1)
+					vacc.grid(row = 3, column = 0, padx = 6, pady = 4)
+				else:
+					vacc = Label(myLabel, text = " NOT Vaccinated",font = LARGEFONT,width=20, height=1)
+					vacc.grid(row = 3, column = 0, padx = 6, pady = 4)
 				
-				temp = Label(myLabel, text = db.temp() + "\u00b0 F")
-				temp.grid(row = 4, column = 0, padx = 10, pady = 10)
+				temp = Label(myLabel, text = db.temp() + "\u00b0 F",font = LARGEFONT,width=20, height=1)
+				temp.grid(row = 4, column = 0, padx = 6, pady = 4)
 				
 				fp = io.BytesIO(result[3])
 				
@@ -392,22 +401,42 @@ class HomePage(tk.Frame):
 				img = Label(image=render)
 				img.image = render
 				camera = LabelFrame(self, text= "Student", font = MEDIUMFONT,padx = 10,pady = 10)
-				camera.place(relx=.75, rely=.42,anchor= 'c')
+				camera.place(relx=.732, rely=.42,anchor= 'c')
+				decision = LabelFrame(self, text= "Decision", font = MEDIUMFONT)
+				decision.place(relx=0.24, rely=0.50,anchor= 'c')
 				
 				GPIO.cleanup()
-				if(fm.driver(vs,maskNet,faceNet) == "Mask" and float(db.temp()) <101.5 and result!="IU"):
+				if(fm.driver(vs,maskNet,faceNet) == "Mask" and float(db.temp()) <100.5 and result!="IU"):
 					pygame.mixer.init()
 					pygame.mixer.music.load(success)
 					pygame.mixer.music.play()
 					cameralabel = Label(camera, image=render,borderwidth = 10,background="green")
 					cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+					#decision.configure(background="green")
+					decisionLabel = Label(decision, text= "PASS", font = MEDIUMFONT,width=20, height=6,background="green")
+					decisionLabel.grid(row = 7, column = 0, padx = 10, pady = 10)
 					self.greenlight()
 				else:
+					reason = ""
 					pygame.mixer.init()
 					pygame.mixer.music.load(denied)
 					pygame.mixer.music.play()
+					
+					if(fm.driver(vs,maskNet,faceNet) == "No Mask"):
+						reason += "No Mask "
+					else:
+						reason += "No Face Detected"
+					
+					if(float(db.temp()) >=100.5):
+						reason += "High Temp "
+					if (result=="IU"):
+						reason += "NOT Registered"
+						
 					cameralabel = Label(camera, image=render,borderwidth = 10,background="red")
 					cameralabel.grid(row = 1, column = 0, padx = 10, pady = 10)
+					#decision.configure(background="red")
+					decisionLabel = Label(decision, text= reason, font = MEDIUMFONT,width=20, height=6,background="red")
+					decisionLabel.grid(row = 7, column = 0, padx = 10, pady = 10)
 					self.redlight()
 					
                     
