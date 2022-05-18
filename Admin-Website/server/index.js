@@ -3,7 +3,6 @@ const mysql = require("mysql");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const {spawn} = require('child_process');
 const {uploadFile, deleteFile} = require('./s3')
 const saltRounds = 10;
 const Buffer = require('safe-buffer').Buffer
@@ -12,7 +11,6 @@ require('dotenv').config()
 
 const app = express();
 app.use(express.json()); 
-// app.use(cors());
 
 const corsOptions ={
     origin: process.env.CORS_PROXY_LINK, 
@@ -136,6 +134,7 @@ app.post("/register",async(req,res) => {
     const lastname = req.body.lastname;
     const email = req.body.email;
     const EMPL = req.body.EMPL;
+    const RFID = req.body.RFID * 256;
     const VAXInfo = req.body.VAXInfo;
     const Profilepic = req.body.Profilepic;
     const regex = /^data:.+\/(.+);base64,(.*)$/;
@@ -151,21 +150,26 @@ app.post("/register",async(req,res) => {
         res.send({message: "User with given EMPL already exist!"});
     }
     else{
-        const result = await uploadFile(buffer, EMPL)
-        db.query("INSERT INTO users (RFID,First_name,Last_name,Email,Vaccination,EmplID,Profpic) VALUES (?,?,?,?,?,?,?)",
-        [Math.random() * (1000000 - 0) + 0, firstname,lastname,email, VAXInfo, EMPL, result.Location], 
+        const uploadresult = await uploadFile(buffer, EMPL)
+        if((uploadresult.Location)){
+            db.query("INSERT INTO users (RFID,First_name,Last_name,Email,Vaccination,EmplID,Profpic) VALUES (?,?,?,?,?,?,?)",
+            [RFID, firstname,lastname,email, VAXInfo, EMPL, uploadresult.Location], 
      
-        (err,result) => {
-            if (err) {
-                //If error
-                res.send({err: err});
-                console.log(err);
-            } 
-            else{
-                //If success
-            res.send({message: "Registration completed successsfully!"});
-            }
-        })
+            (err,result) => {
+                if (err) {
+                    //If error
+                    res.send({err: err});
+                    console.log(err);
+                } 
+                else{
+                    //If success
+                res.send({message: "Registration completed successsfully!"});
+                }
+            })
+        }
+        else{
+            res.send({message: "Profile Picture failed to upload."})
+        }
     }
 })
 
@@ -277,6 +281,7 @@ app.post("/registerguard", async (req,res) => {
 
 app.post("/deleteStudent", async (req,res) => {
     const EMPLID = req.body.EMPLID;
+    const deleteresult = await deleteFile(EMPLID)
     db.query("DELETE FROM users WHERE EmplID = ?",
         [EMPLID], 
         async (err) => {
@@ -327,22 +332,6 @@ app.post("/deleteGuard", async (req,res) => {
         })
 })
 
-app.post("/RFIDRegister", (req,res) => {
-    var dataToSend;
-    // spawn new child process to call the python script
-    const python = spawn('python', ['RFID.py']);
-    // collect data from script
-    python.stdout.on('data', function (data) {
-    console.log('Pipe data from python script ...');
-    dataToSend = data.toString();
-    });
-    // in close event we are sure that stream from child process is closed
-    python.on('close', (code) => {
-    console.log(`child process close all stdio with code ${code}`);
-    // send data to browser
-    res.send(dataToSend)
-    });
-})
 
 const PORT = process.env.PORT || 5000;
 

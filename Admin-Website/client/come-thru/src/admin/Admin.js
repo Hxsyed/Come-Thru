@@ -65,12 +65,11 @@ export default function SignUp() {
       lang: 'en',
       unit: 'imperial', // values are (metric, standard, imperial)
     }); 
-    // console.log(data?.current.time)
+    
     const [value, setValue] = useState(new Date());
     if (data) {
       data.current.date = value.toString()
     } 
-      // console.log(data.current.date)
     const classes = useStyles();
     const history = useHistory();
     const [VAX, setVAX] = React.useState('');
@@ -106,12 +105,6 @@ export default function SignUp() {
       setregtype(event.target.value);
     };
 
-    const getRFIDTAG = () => {
-    axiosInstance.post("/RFIDRegister",{
-    }).then((Response) => {
-      console.log(Response);
-    });
-  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -133,16 +126,21 @@ export default function SignUp() {
         alert("EMPL ID can only contain numbers!");
         return
     }
-    register(data.get('firstName'),data.get('lastName'),data.get('email'),data.get('EMPLID'), VAX, dataUri)
+    if (!validator.isNumeric(data.get('RFID'))){
+      alert("RFID can only contain numbers!");
+      return
+  }
+    register(data.get('firstName'),data.get('lastName'),data.get('email'),data.get('EMPLID'),data.get('RFID'), VAX, dataUri)
   };
 
 
-  const register = (firstnname,lastname,emailregister,emplregister,vaccinationstatus, profpic) => {
+  const register = (firstnname,lastname,emailregister,emplregister,rfid,vaccinationstatus, profpic) => {
     axiosInstance.post("/register",{
       firstnname: firstnname,
       lastname: lastname, 
       email: emailregister,
       EMPL: emplregister,
+      RFID: rfid,
       VAXInfo: vaccinationstatus,
       Profilepic: profpic
     }).then((Response) => {
@@ -344,6 +342,15 @@ export default function SignUp() {
                   name="EMPLID"
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="RFID"
+                  label="RFID"
+                  name="RFID"
+                />
+              </Grid>
             </Grid>
             <Box textAlign='center'>
                 <Button
@@ -352,15 +359,6 @@ export default function SignUp() {
                 sx={{ mt: 3, mb: 2 }}
                 onClick={openModal}>
                 Photo
-                </Button>
-            </Box>
-            <Box textAlign='center'>
-                <Button
-                // type="submit"
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                onClick={getRFIDTAG}>
-                RFID
                 </Button>
             </Box>
             <FormControl fullWidth>
