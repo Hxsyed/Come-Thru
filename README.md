@@ -23,18 +23,22 @@ npm start dev # run the react.js project in development mode
 Open http://localhost:3000 to view it in the browser.
 
 ## Repository Structure
-- `client/come-thru` : This folder contains all front-end-related files. 
-  - `src`   
-    - `admin/` : The main page for the logged in admin
-    - `contexts/` : Has all the authorization & authentication implementation for creating an account, logging in and signing out
-    - `navbar/` : The code for the navigation bar and its many states
-    - `signIn/` : A page that lets a user log into the website
-    - `util/` : Has config functions needed to communicate with the backend
-    - `App.js/`: Routes to specific path
-    - `index.js`: Browser router and ReactDOM render
-- `server` : This folder contains all back-end-related files. 
-  - `index` : Contains all the back-end functions
-  - `hello.py` : Contains the code to fetch the RFID tag from MFRC-522 scanner
+- `Admin-Website` : This folder contains Full stack Website files. 
+  - `client/come-thru` : This folder contains all front-end-related files. 
+    - `src`   
+      - `admin/` : The main page for the logged in admin
+      - `contexts/` : Has all the authorization & authentication implementation for creating an account, logging in and signing out
+      - `navbar/` : The code for the navigation bar and its many states
+      - `signIn/` : A page that lets a user log into the website
+      - `util/` : Has config functions needed to communicate with the backend
+      - `App.js/`: Routes to specific path
+      - `index.js`: Browser router and ReactDOM render
+  - `server` : This folder contains all back-end-related files. 
+    - `index.js` : Contains all the back-end functions
+    - `s3.js` : Contains the code for Amzon s3 bucket connection
+- `Guard-UI` : This folder contains our Tkinter application files.
+  - `db.py` : Contains all the back-end functions and database connection
+  - `guard_ui.py` : Contains GUI code for our Tkinter application  
    
 ## Project Documentation
 1. [Come-Thru Powerpoint](https://drive.google.com/file/d/11BTRRMZfQFwb-vi__FjNdz-cUS9OFXV8/view?usp=sharing)
