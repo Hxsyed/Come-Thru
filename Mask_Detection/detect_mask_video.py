@@ -96,7 +96,7 @@ class FaceMask:
                 # determine the class label and color we'll use to draw
                 # the bounding box and text
         # 		label = "Mask"
-                if mask > withoutMask:label = "Mask" 
+                if mask > 0.8 :label = "Mask" 
                 else: label = "No Mask"
                 
                 

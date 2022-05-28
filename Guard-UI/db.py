@@ -1,25 +1,26 @@
-import mysql.connector
 import os
+import mysql.connector
 import requests
 import bcrypt
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import time,board,busio
 import numpy as np
 import boto3
 import adafruit_mlx90640
-load_dotenv()
+#load_dotenv()
 # Connect to the database
+print(os.environ['USER'])
 db = mysql.connector.connect(
           
-          host="us-cdbr-east-05.cleardb.net",
-          user="bf3b65b19b9060",
-          passwd="de5e5e17",
-          database="heroku_182617f0d7b626c"
+          host= os.environ.get("HOST"),
+          user=os.environ.get("USER"),
+          passwd=os.environ.get("DATABASE_PASSWORD"),
+          database=os.environ.get("DATABASE_NAME")
         )
-s3 = boto3.client('s3', aws_access_key_id="AKIASJV62RM7TT6A3IP5", 
-                                     aws_secret_access_key="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", 
+s3 = boto3.client('s3', aws_access_key_id=os.environ.get("aws_access_key_id"), 
+                                     aws_secret_access_key=os.environ.get("aws_secret_access_key"), 
                                      region_name="us-east-1")
-WEATHER_API_KEY = "22d99c9ccdaf14ed6a6434a0471accba"
+WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY") 
 
 mycursor = db.cursor()
 

@@ -14,9 +14,10 @@ import io
 import sys
 
 import pygame
-sound = "/home/pi/Desktop/Come-Thru/Guard-UI/sound.mp3"
-denied = "/home/pi/Desktop/Come-Thru/Guard-UI/denied.mp3" 
-success = "/home/pi/Desktop/Come-Thru/Guard-UI/success.mp3"
+
+sound = "/home/pi/Desktop/Come-Thru/Guard-UI/Sounds/sound.mp3"
+denied = "/home/pi/Desktop/Come-Thru/Guard-UI/Sounds/denied.mp3" 
+success = "/home/pi/Desktop/Come-Thru/Guard-UI/Sounds/success.mp3"
 
 # libraries and packages
 from tensorflow.keras.applications.mobilenet_v3 import preprocess_input
@@ -52,7 +53,7 @@ global faceNet
 faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
 # load the face mask detector model from disk
 global maskNet
-maskNet = load_model("/home/pi/Desktop/Come-Thru/Mask_Detection/mask_detector_mnv3.model")
+maskNet = load_model("/home/pi/Desktop/Come-Thru/Mask_Detection/final_mask.model")
 # initialize the video stream
 #print("[INFO] starting video stream...")
 global vs
@@ -324,7 +325,7 @@ class HomePage(tk.Frame):
 			self.after(1000,self.activate_rfid)
 		else:
 			id,text = reader.read()
-			result = db.fetch(id)
+			result = db.fetch(int(id/256))
 			# RFID SCAN
 			myLabel = LabelFrame(self, text= "Student Information", font = MEDIUMFONT,padx = 10,pady = 10)
 			myLabel.place(relx=.728, rely=.82,anchor= 'c')

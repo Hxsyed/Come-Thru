@@ -38,7 +38,7 @@ Open http://localhost:3000 to view it in the browser.
     - `s3.js` : Contains the code for Amzon s3 bucket connection
 - `Guard-UI` : This folder contains our Tkinter application files.
   - `db.py` : Contains all the back-end functions and database connection
-  - `guard_ui.py` : Contains GUI code for our Tkinter application  
+  - `guard_ui.py` : Contains GUI code for our Tkinter application
    
 ## Project Documentation
 1. [Come-Thru Powerpoint](https://drive.google.com/file/d/11BTRRMZfQFwb-vi__FjNdz-cUS9OFXV8/view?usp=sharing)
