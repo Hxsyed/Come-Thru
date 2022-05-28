@@ -39,6 +39,13 @@ Open http://localhost:3000 to view it in the browser.
 - `Guard-UI` : This folder contains our Tkinter application files.
   - `db.py` : Contains all the back-end functions and database connection
   - `guard_ui.py` : Contains GUI code for our Tkinter application
+- `Mask Detection` : This folder contains our face mask detection files.
+  - `dataset` : This folder contains the images used for model training.
+  - `face_detector`: This folder contains pre-trained model for face detection.
+  - `detect_mask_video.py` : Runs the camera to setup frame and perform detection.
+  - `final_mask.model` : Final trained model used for face mask detection.
+  - `train_kfold.py` : File for training model using K-fold cross validation.
+  - `train_models.py` : File for traning model using Train-Test split.
    
 ## Project Documentation
 1. [Come-Thru Powerpoint](https://drive.google.com/file/d/11BTRRMZfQFwb-vi__FjNdz-cUS9OFXV8/view?usp=sharing)
