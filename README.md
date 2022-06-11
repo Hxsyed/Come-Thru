@@ -48,6 +48,6 @@ Open http://localhost:3000 to view it in the browser.
   - `train_models.py` : File for traning model using Train-Test split.
    
 ## Project Documentation
-1. [Come-Thru Powerpoint](https://drive.google.com/file/d/11BTRRMZfQFwb-vi__FjNdz-cUS9OFXV8/view?usp=sharing)
-2. [Come-Thru Proposal](https://drive.google.com/file/d/11BTRRMZfQFwb-vi__FjNdz-cUS9OFXV8/view?usp=sharing)  
+1. [Come-Thru Powerpoint](https://docs.google.com/presentation/d/16wbIWk9td-UuQ53f3foKC1Vg_PDeEWJO/edit?usp=sharing&ouid=103159057980070067489&rtpof=true&sd=true)
+2. [Come-Thru Proposal](https://drive.google.com/file/d/1uub9MHMMsYmGQ761KaTmEw16FKjZYmJO/view?usp=sharing)  
 
